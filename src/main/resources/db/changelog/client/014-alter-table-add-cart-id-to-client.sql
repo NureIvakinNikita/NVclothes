@@ -1,0 +1,2 @@
+ALTER TABLE client
+ADD COLUMN cart_id BIGINT REFERENCES cart(id);

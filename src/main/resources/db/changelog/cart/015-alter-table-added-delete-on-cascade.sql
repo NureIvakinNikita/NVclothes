@@ -1,0 +1,2 @@
+ALTER TABLE cart
+ADD CONSTRAINT client_id FOREIGN KEY (client_id) REFERENCES client (id) ON DELETE CASCADE;
