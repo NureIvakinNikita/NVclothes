@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pg_homework
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+    password: #${PASSWORD}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
