@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "client", schema = "nvclothes")
+@Table(name = "client", schema = "project")
 public class Client {
 
     @Id
@@ -29,4 +29,15 @@ public class Client {
     @Column
     private Date birthday;
 
+    @OneToOne
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    private Cart cart_id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "order_client",
+            joinColumns =
+                    { @JoinColumn(name = "client_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "order_id", referencedColumnName = "id") })
+    private Order order;
 }

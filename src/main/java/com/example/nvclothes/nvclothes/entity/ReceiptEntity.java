@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "receipt", schema = "nvclothes")
+@Table(name = "receipt", schema = "project")
 public class Receipt {
 
     @Id
@@ -24,8 +25,13 @@ public class Receipt {
     @Column
     private Date paymentDate;
 
+    @Column
     private String address;
 
-    private String client;
+
+    //private String client;
+
+    @OneToMany(mappedBy = "receipt")
+    private Set<Order> order;
 
 }

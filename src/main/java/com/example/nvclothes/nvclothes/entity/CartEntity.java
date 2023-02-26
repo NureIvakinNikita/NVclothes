@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "cart", schema = "project")
 public class Cart {
 
     @Id
@@ -19,4 +20,9 @@ public class Cart {
     private Long price;
     @Column
     private Long clientId;
+
+    @OneToOne(mappedBy = "client_id")
+    private Client client;
+
+
 }
