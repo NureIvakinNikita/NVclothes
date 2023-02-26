@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name = "cart", schema = "project")
-public class Cart {
+public class CartEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Cart {
     private Long clientId;
 
     @OneToOne(mappedBy = "client_id")
-    private Client client;
+    private ClientEntity client;
 
 
 }

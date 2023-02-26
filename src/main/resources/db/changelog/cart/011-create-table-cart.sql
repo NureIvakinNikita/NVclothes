@@ -1,4 +1,4 @@
-CREATE TABLE cart(
+CREATE TABLE project.cart(
     id SERIAL NOT NULL PRIMARY KEY,
     product_amount BIGINT NULL,
     price BIGINT NULL,

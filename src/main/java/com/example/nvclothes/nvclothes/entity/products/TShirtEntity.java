@@ -1,7 +1,7 @@
 package com.example.nvclothes.nvclothes.entity.products;
 
 
-import com.example.nvclothes.nvclothes.entity.Order;
+import com.example.nvclothes.nvclothes.entity.OrderEntity;
 import com.example.nvclothes.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "t_shirt", schema = "project")
 @EqualsAndHashCode
-public class TShirt{
+public class TShirtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -44,5 +44,5 @@ public class TShirt{
                     { @JoinColumn(name = "product_id", referencedColumnName = "id") },
             inverseJoinColumns =
                     { @JoinColumn(name = "order_id", referencedColumnName = "id") })
-    private Order order;
+    private OrderEntity order;
 }

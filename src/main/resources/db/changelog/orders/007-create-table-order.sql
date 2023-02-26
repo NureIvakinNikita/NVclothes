@@ -1,4 +1,4 @@
-CREATE TABLE orders (
+CREATE TABLE project.orders (
         id SERIAL PRIMARY KEY,
         order_group_id INTEGER NOT NULL,
         registration_date DATE NOT NULL,

@@ -1,4 +1,4 @@
-CREATE TABLE trainers(
+CREATE TABLE project.trainers(
     id SERIAL NOT NULL PRIMARY KEY,
     trainers_id BIGINT NOT NULL ,
     attribute VARCHAR NOT NULL,

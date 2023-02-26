@@ -1,2 +1,4 @@
-package com.example.nvclothes.nvclothes.repository;public class Repository {
+package com.example.nvclothes.nvclothes.repository;
+
+public class Repository {
 }

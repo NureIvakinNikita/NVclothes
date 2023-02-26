@@ -1,4 +1,4 @@
-CREATE TABLE order_product (
+CREATE TABLE project.order_product (
     order_product_id INTEGER NOT NULL,
     order_id INTEGER REFERENCES orders (id),
     product_id INTEGER,

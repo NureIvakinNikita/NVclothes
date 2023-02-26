@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "receipt", schema = "project")
-public class Receipt {
+public class ReceiptEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,6 @@ public class Receipt {
     //private String client;
 
     @OneToMany(mappedBy = "receipt")
-    private Set<Order> order;
+    private Set<OrderEntity> order;
 
 }

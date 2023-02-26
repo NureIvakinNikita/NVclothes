@@ -1,2 +1,7 @@
-package com.example.nvclothes.nvclothes.service;public class TrainersEntityRepository {
+package com.example.nvclothes.nvclothes.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class TrainersEntityService {
 }

@@ -1,4 +1,4 @@
-CREATE TABLE client (
+CREATE TABLE project.client (
    id SERIAL PRIMARY KEY,
    name TEXT NOT NULL,
    lastname TEXT NOT NULL,

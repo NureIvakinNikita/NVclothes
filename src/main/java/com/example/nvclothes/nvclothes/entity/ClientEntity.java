@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Table(name = "client", schema = "project")
-public class Client {
+public class ClientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Client {
 
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
-    private Cart cart_id;
+    private CartEntity cart_id;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "order_client",
@@ -39,5 +39,5 @@ public class Client {
                     { @JoinColumn(name = "client_id", referencedColumnName = "id") },
             inverseJoinColumns =
                     { @JoinColumn(name = "order_id", referencedColumnName = "id") })
-    private Order order;
+    private OrderEntity order;
 }

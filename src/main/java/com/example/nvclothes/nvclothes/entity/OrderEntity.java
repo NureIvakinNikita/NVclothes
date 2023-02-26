@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name = "orders", schema = "project")
-public class Order {
+public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,25 +30,25 @@ public class Order {
 
 
     @OneToOne(mappedBy = "order")
-    private Client client;
+    private ClientEntity client;
 
     @ManyToOne
     @JoinColumn(name = "receipt_id" , nullable = true, referencedColumnName = "id")
-    private Receipt receipt;
+    private ReceiptEntity receipt;
 
     @OneToOne(mappedBy = "order")
-    private Trainers product;
+    private TrainersEntity product;
 
     @OneToOne(mappedBy = "order")
-    private Trousers trousers;
+    private TrousersEntity trousers;
 
     @OneToOne(mappedBy = "order")
-    private TShirt tShirt;
+    private TShirtEntity tShirt;
 
     @OneToOne(mappedBy = "order")
-    private Hoodie hoodie;
+    private HoodieEntity hoodie;
 
     @OneToOne(mappedBy = "order")
-    private Accessories accessories;
+    private AccessoriesEntity accessories;
 
 }
