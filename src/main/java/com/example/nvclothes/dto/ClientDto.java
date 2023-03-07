@@ -1,8 +1,11 @@
-package com.example.nvclothes.nvclothes.dto;
+package com.example.nvclothes.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientDto {
 
     private Long id;

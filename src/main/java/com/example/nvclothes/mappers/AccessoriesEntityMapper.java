@@ -1,7 +1,7 @@
-package com.example.nvclothes.nvclothes.mappers;
+package com.example.nvclothes.mappers;
 
-import com.example.nvclothes.nvclothes.dto.AccessoriesDto;
-import com.example.nvclothes.nvclothes.entity.products.AccessoriesEntity;
+import com.example.nvclothes.entity.products.AccessoriesEntity;
+import com.example.nvclothes.dto.AccessoriesDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -13,7 +13,7 @@ public interface AccessoriesEntityMapper {
 
     @Mapping(source = "order", target = "orderDto")
     AccessoriesDto toDto(AccessoriesEntity accessoriesEntity);
-    @Mapping(source = "order", target = "orderDto")
+    @Mapping(source = "orderDto", target = "order")
     AccessoriesEntity toEntity(AccessoriesDto accessoriesDto);
 
 }

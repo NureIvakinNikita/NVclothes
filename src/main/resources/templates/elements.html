@@ -1,0 +1,70 @@
+<div th:fragment="elements">
+    <div class="row">
+        <div class="col-md-1">
+            <p>Filters</p>
+        </div>
+        <div class="col-md-11">
+            <select>Order by<i class="bi bi-caret-down-fill"></i>
+                <option>By name from a to z</option>
+                <option>By price from low to high</option>
+                <option>By price from high to low</option>
+                <option>By popularity</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <select>Type of product<i class="bi bi-caret-down-fill"></i>
+                <option>Accessories</option>
+                <option>Hoodies</option>
+                <option>Trousers</option>
+                <option>T-Shirts</option>
+                <option>Trainers</option>
+            </select>
+            <br>
+            <select>Cost<i class="bi bi-caret-down-fill"></i>
+                <option>XXL</option>
+            </select>
+            <br>
+            <select>Select size<i class="bi bi-caret-down-fill"></i>
+                <option>XXL</option>
+                <option>XL</option>
+                <option>L</option>
+                <option>M</option>
+                <option>S</option>
+                <option>XS</option>
+                <option>XXS</option>
+            </select>
+            <br>
+            <select>Brand<i class="bi bi-caret-down-fill"></i>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+                <option>Brand 1</option>
+            </select>
+        </div>
+<!--        for (int i = 0; i < model.size(); i++){-->
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-3">
+                <img  class="img-thumbnail" style="width:360px; height:210px; margin-top: 10px"  src ="">
+                <p>Name: productName</p>
+                <p>Cost: productCost</p>
+                <select>Size<i class="bi bi-caret-down-fill"></i>
+                    <option>XXL</option>
+                    <option>XL</option>
+                    <option>L</option>
+                    <option>M</option>
+                    <option>S</option>
+                    <option>XS</option>
+                    <option>XXS</option>
+                </select>
+
+            </div>
+<!--        }-->
+
+    </div>
+</div>

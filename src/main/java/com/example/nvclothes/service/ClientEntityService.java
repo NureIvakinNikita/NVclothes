@@ -1,6 +1,6 @@
-package com.example.nvclothes.nvclothes.service;
+package com.example.nvclothes.service;
 
-import com.example.nvclothes.nvclothes.repository.interfaces.ClientEntityRepositoryInterface;
+import com.example.nvclothes.repository.interfaces.ClientEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

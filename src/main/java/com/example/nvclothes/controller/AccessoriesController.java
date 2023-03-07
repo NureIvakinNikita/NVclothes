@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.controller;
+package com.example.nvclothes.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

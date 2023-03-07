@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.entity;
+package com.example.nvclothes.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name = "cart", schema = "project")
+@Access(AccessType.FIELD)
 public class CartEntity {
 
     @Id
@@ -21,7 +22,7 @@ public class CartEntity {
     @Column
     private Long clientId;
 
-    @OneToOne(mappedBy = "client_id")
+    @OneToOne(mappedBy = "cart_id")
     private ClientEntity client;
 
 

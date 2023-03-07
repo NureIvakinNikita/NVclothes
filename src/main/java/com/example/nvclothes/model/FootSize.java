@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.model;
+package com.example.nvclothes.model;
 
 public enum FootSize {
 

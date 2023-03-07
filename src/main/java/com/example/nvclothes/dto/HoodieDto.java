@@ -1,6 +1,6 @@
-package com.example.nvclothes.nvclothes.dto;
+package com.example.nvclothes.dto;
 
-import com.example.nvclothes.nvclothes.model.Size;
+import com.example.nvclothes.model.Size;
 import lombok.Data;
 
 @Data
@@ -16,6 +16,6 @@ public class HoodieDto {
     private Size size;
     private Long amount;
 
-    //private Order order;
+    private OrderDto orderDto;
 
 }

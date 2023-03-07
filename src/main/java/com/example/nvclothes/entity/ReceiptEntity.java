@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.entity;
+package com.example.nvclothes.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,6 +9,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "receipt", schema = "project")
+@Access(AccessType.FIELD)
 public class ReceiptEntity {
 
     @Id

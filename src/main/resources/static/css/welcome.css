@@ -1,21 +1,21 @@
-.welcome{
-    text-align:center;
-    margin-top:50px;
-    background-color: #000000;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-body{
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-family: 'Itim', cursive;
 }
 
-a{
-    font-family: 'Itim', cursive;
+.container a {
     color: white;
     text-decoration: none;
 }
 
+
+.background {
+    background-color: black;
+
+}
+/*th:class="${true} ? 'active'"*/
 /*
 .hat{
     background-color: black;

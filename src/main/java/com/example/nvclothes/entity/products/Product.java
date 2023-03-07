@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.entity.products;
+package com.example.nvclothes.entity.products;
 
 public abstract class Product {
 }

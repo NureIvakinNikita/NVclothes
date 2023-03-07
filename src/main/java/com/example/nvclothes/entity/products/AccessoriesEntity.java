@@ -1,7 +1,7 @@
-package com.example.nvclothes.nvclothes.entity.products;
+package com.example.nvclothes.entity.products;
 
-import com.example.nvclothes.nvclothes.entity.OrderEntity;
-import com.example.nvclothes.nvclothes.model.Size;
+import com.example.nvclothes.entity.OrderEntity;
+import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +11,7 @@ import lombok.*;
 @Table(name = "accessories", schema = "project")
 @AllArgsConstructor
 @Builder
+@Access(AccessType.FIELD)
 public class AccessoriesEntity {
 
     @Id
@@ -32,8 +33,6 @@ public class AccessoriesEntity {
     private String name;
 
     private Long cost;
-
-    private Size size;
 
     private Long amount;
 

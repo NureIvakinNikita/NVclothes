@@ -1,4 +1,4 @@
-package com.example.nvclothes.nvclothes.entity;
+package com.example.nvclothes.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,11 +15,12 @@ import java.util.Date;
 @Table(name = "client", schema = "project")
 @Builder
 @AllArgsConstructor
+@Access(AccessType.FIELD)
 public class ClientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+
     private Long id;
     @Column
     private String name;
@@ -37,11 +39,8 @@ public class ClientEntity {
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
     private CartEntity cart_id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "order_client",
-            joinColumns =
-                    { @JoinColumn(name = "client_id", referencedColumnName = "id") },
-            inverseJoinColumns =
-                    { @JoinColumn(name = "order_id", referencedColumnName = "id") })
-    private OrderEntity order;
+    @OneToMany(mappedBy = "client")
+    private List<OrderClientEntity> orders;
+
+
 }

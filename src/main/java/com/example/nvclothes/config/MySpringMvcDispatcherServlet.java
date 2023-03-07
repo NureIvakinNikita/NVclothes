@@ -1,2 +1,4 @@
-package com.example.nvclothes.config;public class MySpringMvcDispatcherServlet {
+package com.example.nvclothes.config;
+
+public class MySpringMvcDispatcherServlet {
 }

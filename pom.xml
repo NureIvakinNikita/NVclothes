@@ -17,7 +17,7 @@
 		<java.version>17</java.version>
 		<lombok.version>1.18.24</lombok.version>
 		<springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-		<spring-webmvc.version>6.0.4</spring-webmvc.version>
+		<spring-webmvc.version>6.0.6</spring-webmvc.version>
 		<springfox-swagger-ui.version>3.0.0</springfox-swagger-ui.version>
 		<mockito-core.version>5.1.1</mockito-core.version>
 		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
@@ -25,6 +25,14 @@
 		<spring-boot-maven-plugin.version>3.0.1</spring-boot-maven-plugin.version>
 		<postgresql.version>42.5.1</postgresql.version>
 		<spring-boot-starter-data-jpa.version>3.0.3</spring-boot-starter-data-jpa.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.0.2</springdoc-openapi-starter-webmvc-ui.version>
+		<jaxb-api.version>2.2.4</jaxb-api.version>
+		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+		<spring-security-test.version>6.0.1</spring-security-test.version>
+		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
+<!--		<thymeleaf-spring5.version>3.1.1.RELEASE</thymeleaf-spring5.version>-->
+		<jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
+		<liquibase-core.version>4.19.1</liquibase-core.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,8 +42,32 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-security-test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>${spring-boot-starter-data-jpa.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
 		<dependency>
@@ -45,28 +77,16 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-			<version>3.0.2</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-security</artifactId>-->
+<!--			<version>3.0.2</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring-webmvc.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+			<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
 		</dependency>
 
 		<dependency>
@@ -81,26 +101,38 @@
 			<version>${springfox-swagger-ui.version}</version>
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.2.4</version>
+			<version>${jaxb-api.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.2</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt</artifactId>-->
+<!--			<version>0.2</version>-->
+<!--		</dependency>-->
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-test -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>6.0.1</version>
-			<scope>test</scope>
-		</dependency>
+<!--		 https://mvnrepository.com/artifact/org.springframework.security/spring-security-test-->
+
 
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -126,7 +158,7 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>8.0.0.Final</version>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
 
 		<dependency>
@@ -136,10 +168,35 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
+
+
+<!--		<dependency>-->
+<!--			<groupId>org.thymeleaf</groupId>-->
+<!--			<artifactId>thymeleaf-spring5</artifactId>-->
+<!--			<version>${thymeleaf-spring5.version}</version>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.thymeleaf</groupId>-->
+<!--			<artifactId>thymeleaf</artifactId>-->
+<!--			<version>3.1.1.RELEASE</version>-->
+<!--		</dependency>-->
+
+
+		<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>${spring-boot-starter-data-jpa.version}</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${jakarta.servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>${liquibase-core.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -149,7 +206,6 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -201,7 +257,6 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 

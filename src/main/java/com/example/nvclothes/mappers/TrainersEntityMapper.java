@@ -1,7 +1,7 @@
-package com.example.nvclothes.nvclothes.mappers;
+package com.example.nvclothes.mappers;
 
-import com.example.nvclothes.nvclothes.dto.TrainersDto;
-import com.example.nvclothes.nvclothes.entity.products.TrainersEntity;
+import com.example.nvclothes.dto.TrainersDto;
+import com.example.nvclothes.entity.products.TrainersEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -11,9 +11,9 @@ public interface TrainersEntityMapper {
 
     TrainersEntityMapper INSTANCE = Mappers.getMapper(TrainersEntityMapper.class);
 
-    @Mapping(source = "order", target = "orderDto")
+    @Mapping(target = "orderDto", source = "trainersEntity.order")
     TrainersDto toDto(TrainersEntity trainersEntity);
 
-    @Mapping(source = "order", target = "orderDto")
+    @Mapping(target = "order", source = "trainersDto.orderDto")
     TrainersEntity toEntity(TrainersDto  trainersDto);
 }

@@ -1,8 +1,8 @@
-package com.example.nvclothes.nvclothes.entity.products;
+package com.example.nvclothes.entity.products;
 
 
-import com.example.nvclothes.nvclothes.entity.OrderEntity;
-import com.example.nvclothes.nvclothes.model.Size;
+import com.example.nvclothes.entity.OrderEntity;
+import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +12,7 @@ import lombok.*;
 @Table(name = "t_shirt", schema = "project")
 @AllArgsConstructor
 @Builder
+@Access(AccessType.FIELD)
 public class TShirtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

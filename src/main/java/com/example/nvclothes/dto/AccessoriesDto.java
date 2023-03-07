@@ -1,9 +1,11 @@
-package com.example.nvclothes.nvclothes.dto;
+package com.example.nvclothes.dto;
 
-import com.example.nvclothes.nvclothes.model.Size;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AccessoriesDto {
 
 
@@ -15,5 +17,5 @@ public class AccessoriesDto {
     private String name;
     private Long cost;
     private Long amount;
-    //private OrderEntity order;
+    private OrderDto orderDto;
 }

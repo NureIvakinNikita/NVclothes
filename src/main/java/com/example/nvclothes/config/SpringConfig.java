@@ -1,2 +1,6 @@
-package com.example.nvclothes.nvclothes.config;public class SpringConfig {
+package com.example.nvclothes.config;
+
+public class SpringConfig{
+
+
 }

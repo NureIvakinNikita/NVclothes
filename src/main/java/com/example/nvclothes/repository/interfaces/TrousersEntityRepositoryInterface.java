@@ -1,6 +1,6 @@
-package com.example.nvclothes.nvclothes.repository.interfaces;
+package com.example.nvclothes.repository.interfaces;
 
-import com.example.nvclothes.nvclothes.entity.products.TrousersEntity;
+import com.example.nvclothes.entity.products.TrousersEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

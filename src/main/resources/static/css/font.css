@@ -1,0 +1,33 @@
+@font-face {
+    font-family: 'Itim';
+    src: url('Itim-Regular.ttf') format('truetype');
+}
+
+body{
+    font-family: 'Itim', cursive;
+    color: white;
+    text-decoration: none;
+}
+.topic{
+    font-family: 'Itim', cursive;
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.myFontStyle{
+    font-family: 'Itim', cursive;
+    color: white;
+    text-decoration: none;
+}
+
+#link{
+    font-family: 'Itim', cursive;
+    color: white;
+    text-decoration: none;
+}
+
+.container-fluid a {
+    font-family: 'Itim', cursive;
+    color: white;
+}

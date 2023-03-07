@@ -1,9 +1,8 @@
-package com.example.nvclothes.nvclothes.service;
+package com.example.nvclothes.service;
 
-import com.example.nvclothes.nvclothes.dto.TrainersDto;
-import com.example.nvclothes.nvclothes.entity.products.TrousersEntity;
-import com.example.nvclothes.nvclothes.model.Attribute;
-import com.example.nvclothes.nvclothes.repository.interfaces.TrousersEntityRepositoryInterface;
+import com.example.nvclothes.entity.products.TrousersEntity;
+import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.repository.interfaces.TrousersEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
