@@ -3,11 +3,15 @@ package com.example.nvclothes.service;
 import com.example.nvclothes.dto.AccessoriesDto;
 import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.repository.interfaces.AccessoriesEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -54,7 +58,39 @@ public class AccessoriesEntityService {
     }
 
     public List<AccessoriesEntity> getAllAccessoriesEntities(){
-        return accessoriesRepository.findAll();
+        List<AccessoriesEntity> list = accessoriesRepository.findAll();
+        Comparator<AccessoriesEntity> byId = Comparator.comparing(AccessoriesEntity::getId);
+        Collections.sort(list, byId);
+        List<AccessoriesEntity> entities = new ArrayList<>();
+        AccessoriesEntity accessoriesEntity = AccessoriesEntity.builder().build();
+        Long numericValues;
+        for (AccessoriesEntity entity : list){
+            switch (entity.getAttribute()){
+                case "BRAND":
+                    accessoriesEntity.setBrand(entity.getValue());
+                    break;
+                case "NAME":
+                    accessoriesEntity.setName(entity.getValue());
+                    break;
+                case "COST":
+                    numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                    accessoriesEntity.setCost(numericValues);
+                    break;
+                case "AMOUNT":
+                    numericValues = Long.parseLong(entity.getValue());
+                    accessoriesEntity.setAmount(numericValues);
+                    accessoriesEntity.setId(entity.getId());
+                    accessoriesEntity.setAccessoriesId(entity.getAccessoriesId());
+                    accessoriesEntity.setProductType(ProductType.ACCESSORY);
+                    entities.add(accessoriesEntity);
+
+                    accessoriesEntity = AccessoriesEntity.builder().build();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return entities;
     }
 
     public void deleteAccessoryEntityById(Long id){

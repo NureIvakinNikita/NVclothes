@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+@RestController
 public class MainController {
 
-    @GetMapping("/all-products")
+   /* @GetMapping("/all-products")
     public String mainPage(){
         return "allProducts";
-    }
+    }*/
 
     @GetMapping("/hello")
     public String hello(){

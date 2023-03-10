@@ -1,13 +1,18 @@
 package com.example.nvclothes.service;
 
 import com.example.nvclothes.dto.TrainersDto;
+import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.entity.products.TrainersEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.repository.interfaces.TrainersEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -50,7 +55,41 @@ public class TrainersEntityService {
     }
 
     public List<TrainersEntity> getAllTrainersEntities(){
-        return trainersRepository.findAll();
+        List<TrainersEntity> list = trainersRepository.findAll();
+        Comparator<TrainersEntity> byId = Comparator.comparing(TrainersEntity::getId);
+        Collections.sort(list, byId);
+        List<TrainersEntity> entities = new ArrayList<>();
+        TrainersEntity trainersEntity = TrainersEntity.builder().build();
+        Long numericValues;
+        for (TrainersEntity entity : list){
+            switch (entity.getAttribute()){
+                case "BRAND":
+                    trainersEntity.setBrand(entity.getValue());
+                    break;
+                case "NAME":
+                    trainersEntity.setName(entity.getValue());
+                    break;
+                case "COST":
+                    numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                    trainersEntity.setCost(numericValues);
+                    break;
+                case "SIZE":
+                    trainersEntity.setSize(entity.getSize());
+                    break;
+                case "AMOUNT":
+                    numericValues = Long.parseLong(entity.getValue());
+                    trainersEntity.setAmount(numericValues);
+                    trainersEntity.setId(entity.getId());
+                    trainersEntity.setTrainersId(entity.getTrainersId());
+                    trainersEntity.setProductType(ProductType.TRAINERS);
+                    entities.add(trainersEntity);
+                    trainersEntity = trainersEntity.builder().build();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return entities;
     }
 
     public void deleteTrainersEntityById(Long id){

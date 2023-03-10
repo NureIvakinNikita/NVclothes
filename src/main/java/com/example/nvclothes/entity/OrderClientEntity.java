@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "order_client")
-@IdClass(value = OrderClientEntityPK.class)
+//@IdClass(value = OrderClientEntityPK.class)
 @Access(AccessType.FIELD)
 public class OrderClientEntity {
 
@@ -25,7 +25,10 @@ public class OrderClientEntity {
     private ClientEntity client;
 
     @ManyToOne
-    @JoinColumn(name = "order_group_id", referencedColumnName = "order_group_id", insertable = false, updatable = false)
+    @JoinColumns({
+            @JoinColumn(name = "order_group_id", referencedColumnName = "order_group_id", insertable = false, updatable = false),
+            @JoinColumn(name = "order_id", referencedColumnName = "id", insertable = false, updatable = false)
+    })
     private OrderEntity order;
 
 }

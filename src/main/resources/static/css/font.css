@@ -20,6 +20,11 @@ body{
     color: white;
     text-decoration: none;
 }
+.myFontStyleBlack{
+    font-family: 'Itim', cursive;
+    color: black;
+    text-decoration: none;
+}
 
 #link{
     font-family: 'Itim', cursive;

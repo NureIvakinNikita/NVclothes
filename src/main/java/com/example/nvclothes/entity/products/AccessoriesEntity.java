@@ -1,6 +1,7 @@
 package com.example.nvclothes.entity.products;
 
 import com.example.nvclothes.entity.OrderEntity;
+import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Access(AccessType.FIELD)
-public class AccessoriesEntity {
+public class AccessoriesEntity extends Product{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,10 @@ public class AccessoriesEntity {
     private String name;
 
     private Long cost;
+
+    private Size size;
+
+    private ProductType productType;
 
     private Long amount;
 

@@ -2,12 +2,17 @@ package com.example.nvclothes.service;
 
 import com.example.nvclothes.dto.TrainersDto;
 import com.example.nvclothes.entity.products.TShirtEntity;
+import com.example.nvclothes.entity.products.TrousersEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.repository.interfaces.TShirtEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -49,7 +54,41 @@ public class TShirtEntityService {
     }
 
     public List<TShirtEntity> getAllTrousersEntities(){
-        return tShirtRepository.findAll();
+        List<TShirtEntity> list = tShirtRepository.findAll();
+        Comparator<TShirtEntity> byId = Comparator.comparing(TShirtEntity::getId);
+        Collections.sort(list, byId);
+        List<TShirtEntity> entities = new ArrayList<>();
+        TShirtEntity tShirtEntity = TShirtEntity.builder().build();
+        Long numericValues;
+        for (TShirtEntity entity : list){
+            switch (entity.getAttribute()){
+                case "BRAND":
+                    tShirtEntity.setBrand(entity.getValue());
+                    break;
+                case "NAME":
+                    tShirtEntity.setName(entity.getValue());
+                    break;
+                case "COST":
+                    numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                    tShirtEntity.setCost(numericValues);
+                    break;
+                case "SIZE":
+                    tShirtEntity.setSize(entity.getSize());
+                    break;
+                case "AMOUNT":
+                    numericValues = Long.parseLong(entity.getValue());
+                    tShirtEntity.setAmount(numericValues);
+                    tShirtEntity.setId(entity.getId());
+                    tShirtEntity.setTShirtId(entity.getTShirtId());
+                    tShirtEntity.setProductType(ProductType.TSHIRT);
+                    entities.add(tShirtEntity);
+                    tShirtEntity = tShirtEntity.builder().build();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return entities;
     }
 
     public void deleteTShirtEntityById(Long id){

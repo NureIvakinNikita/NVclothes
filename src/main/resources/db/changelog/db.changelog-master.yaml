@@ -50,3 +50,18 @@ databaseChangeLog:
   - include:
       file: 017-alter-table-orders-added-receipt-id.sql
       relativeToChangelogFile: true
+  - include:
+      file: 018-add-t-shirts.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 019-add-trainers.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 020-add-hoodies.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 021-add-trousers.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 022-add-accessories.sql
+      relativeToChangelogFile: true

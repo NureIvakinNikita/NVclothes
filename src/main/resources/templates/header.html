@@ -1,5 +1,5 @@
-<header th:fragment="header">
-  <div class="background container"  style="width: 100%;margin: 0px 0px;padding: 0px 0px;">
+<header th:fragment="header" style="width: 100%">
+  <div class="my-block col-md-12"  style="width: 100%;margin: 0px 0px;padding: 0px 0px;">
     <a href="#" >Welcome</a>
   </div>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
@@ -27,10 +27,11 @@
             <a class="nav-link" href="#"  >Accessories</a>
           </li>
         </ul>
-        <form class="d-flex">
-          <input class="form-control me-sm-2" style="font-family: 'Itim', cursive;" type="search" placeholder="Search">
-          <button class="btn btn-secondary my-2 my-sm-0" type="submit"  style="font-family: 'Itim', cursive;">Search</button>
+        <form class="d-flex" th:action="@{/all-products/search}" method="post">
+          <input class="form-control me-sm-2" style="font-family: 'Itim', cursive;" type="text" placeholder="Search" name="search">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit" style="font-family: 'Itim', cursive;">Search</button>
         </form>
+
         <div class="d-flex">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">

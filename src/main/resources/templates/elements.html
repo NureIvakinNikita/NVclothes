@@ -1,10 +1,11 @@
-<div th:fragment="elements">
+<div class = "elements-block"  th:fragment="elements">
     <div class="row">
-        <div class="col-md-1">
-            <p>Filters</p>
+        <div class="col-md-3" >
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; padding-left: 10px">Filters</p>
         </div>
-        <div class="col-md-11">
-            <select>Order by<i class="bi bi-caret-down-fill"></i>
+        <div class="col-md-9">
+            <select class="form-control" style="margin-top: 10px; width: 90%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none;">Order by<i class="bi bi-caret-down-fill" style="color: black"></i>
+                <option>Order by</option>
                 <option>By name from a to z</option>
                 <option>By price from low to high</option>
                 <option>By price from high to low</option>
@@ -13,58 +14,72 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3">
-            <select>Type of product<i class="bi bi-caret-down-fill"></i>
-                <option>Accessories</option>
-                <option>Hoodies</option>
-                <option>Trousers</option>
-                <option>T-Shirts</option>
-                <option>Trainers</option>
-            </select>
-            <br>
-            <select>Cost<i class="bi bi-caret-down-fill"></i>
-                <option>XXL</option>
-            </select>
-            <br>
-            <select>Select size<i class="bi bi-caret-down-fill"></i>
-                <option>XXL</option>
-                <option>XL</option>
-                <option>L</option>
-                <option>M</option>
-                <option>S</option>
-                <option>XS</option>
-                <option>XXS</option>
-            </select>
-            <br>
-            <select>Brand<i class="bi bi-caret-down-fill"></i>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-                <option>Brand 1</option>
-            </select>
+
+            <div class="col-md-3">
+                <div style="padding-left: 10px">
+                    <form th:action="@{/all-products/filtered}" method="post">
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Type of product</p>
+                        <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="productType">Type of product<i class="bi bi-caret-down-fill"></i>
+                            <option>All</option>
+                            <option>Accessories</option>
+                            <option>Hoodies</option>
+                            <option>Trousers</option>
+                            <option>T-Shirts</option>
+                            <option>Trainers</option>
+                        </select>
+
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Cost of product</p>
+                        <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="cost">Cost<i class="bi bi-caret-down-fill"></i>
+                            <option>All</option>
+                            <option>XXL</option>
+                        </select>
+
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Size of product</p>
+                        <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="size">Select size<i class="bi bi-caret-down-fill"></i>
+                            <option>All</option>
+                            <option>XXL</option>
+                            <option>XL</option>
+                            <option>L</option>
+                            <option>M</option>
+                            <option>S</option>
+                            <option>XS</option>
+                            <option>XXS</option>
+                        </select>
+
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Brand of product</p>
+                        <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="brand">Brand<i class="bi bi-caret-down-fill"></i>
+                            <option>All</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                            <option>Brand 1</option>
+                        </select>
+                        <button class="btn btn-secondary" type="submit" style="font-family: 'Itim', cursive;">Accept</button>
+                    </form>
+                </div>
+            </div>
+
+
+        <div class="col-md-9">
+            <div class="row" >
+                <div class="col-md-3" th:each="product : ${productList}">
+                    <!--                <img class="img-thumbnail" sizes="(min-width: 768px) 317px, 238px" th:src="@{${product.imagePath}}"/>-->
+                    <div>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Brand: ' + ${product.brand}"></p>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Name: ' + ${product.name}"></p>
+                    </div>
+                    <div style="margin-top: 1%">
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Cost: ' + ${product.cost}"></p>
+                    </div>
+
+                    <select style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:if="${product.size != null}">
+                        <option th:each="size : ${product.size}" th:text="${size}"></option>
+                    </select>
+                </div>
+            </div>
         </div>
-<!--        for (int i = 0; i < model.size(); i++){-->
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-3">
-                <img  class="img-thumbnail" style="width:360px; height:210px; margin-top: 10px"  src ="">
-                <p>Name: productName</p>
-                <p>Cost: productCost</p>
-                <select>Size<i class="bi bi-caret-down-fill"></i>
-                    <option>XXL</option>
-                    <option>XL</option>
-                    <option>L</option>
-                    <option>M</option>
-                    <option>S</option>
-                    <option>XS</option>
-                    <option>XXS</option>
-                </select>
-
-            </div>
-<!--        }-->
-
     </div>
 </div>

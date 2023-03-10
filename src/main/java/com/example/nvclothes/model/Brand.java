@@ -13,5 +13,7 @@ public enum Brand {
     LEVIS,
     GUESS,
     STONE_ISLAND,
+    ARMANI,
+    DICKEIS
 
 }

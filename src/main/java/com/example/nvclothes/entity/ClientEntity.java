@@ -20,18 +20,23 @@ public class ClientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
+
     @Column
     private String name;
-    @Column
+
+    @Column(name = "lastname")
     private String lastName;
+
     @Column
     private String email;
+
     @Column
     private String password;
-    @Column
+
+    @Column(name = "telephone_number")
     private String telephoneNumber;
+
     @Column
     private Date birthday;
 
