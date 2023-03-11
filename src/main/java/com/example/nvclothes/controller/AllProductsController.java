@@ -12,7 +12,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -37,33 +36,16 @@ public class AllProductsController {
             modelAndView.setViewName("allProducts");
             modelAndView.addObject("productList", productList);
             return modelAndView;
-
-        /*List<Product> productList = new ArrayList<>();
-        if (searchedList != null) {
-            Collections.copy(searchedList, productList);
-        } else {
-            productList = allProductsServices.getAllProducts();
-        }
-        ModelAndView modelAndView = new ModelAndView("allProducts");
-        modelAndView.addObject("productList", productList);
-        String html = templateEngine.process("allProducts", new Context(Locale.getDefault(), modelAndView.getModel()));
-        modelAndView.addObject("responseEntity", new ResponseEntity<>(html, HttpStatus.OK));
-        return modelAndView;*/
     }
-
-    /*@GetMapping("/all-products/search")
-    public ModelAndView searchProducts(@RequestParam("searchTerm") String searchTerm, WebRequest request) {
-        List<Product> productList = allProductsServices.searchProducts(searchTerm);
-        ModelAndView modelAndView = new ModelAndView("allProducts");
-        modelAndView.addObject("productList", productList);
-        String html = templateEngine.process("allProducts", new Context(Locale.getDefault(), modelAndView.getModel()));
-        modelAndView.addObject("responseEntity", new ResponseEntity<>(html, HttpStatus.OK));
-        return modelAndView;
-    }*/
 
     @PostMapping("/all-products/search")
     public ModelAndView searchProducts(@RequestParam("search") String name) {
-        searchedList = allProductsServices.searchProducts(name);
+        if (searchedList != null) {
+            searchedList = allProductsServices.searchWithFilter(searchedList, name);
+        } else {
+            searchedList = allProductsServices.searchProducts(name);
+        }
+
         ModelAndView modelAndView = new ModelAndView("allProducts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
@@ -72,46 +54,38 @@ public class AllProductsController {
     @PostMapping("/all-products/filtered")
     public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("cost") String cost,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
-
-        Iterator<Product> iterator = searchedList.iterator();
-
-        while (iterator.hasNext()){
-            Product product = iterator.next();
-            if (!(product.getSize().equals(size) || size.equals("All") &&
-            product.getCost().equals(cost) || cost.equals("All") &&
-            product.getBrand().equals(brand) || brand.equals("All") &&
-            product.getProductType().equals(productType) || productType.equals("All"))){
-                searchedList.remove(product);
-            }
+        if (searchedList == null){
+            searchedList = allProductsServices.getAllProducts();
         }
+        searchedList = allProductsServices.filter(searchedList, size, cost,brand,productType);
         ModelAndView modelAndView = new ModelAndView("allProducts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-   /* @GetMapping("/all-products/search")
-    public ResponseEntity<String> searchProducts(@RequestParam("searchTerm") String searchTerm, WebRequest webRequest) {
-        List<Product> productList = allProductsServices.searchProducts(searchTerm);
+    @PostMapping("/all-products/clear")
+    public ModelAndView clearFilters(){
+        searchedList = allProductsServices.getAllProducts();
         ModelAndView modelAndView = new ModelAndView("allProducts");
-        modelAndView.addObject("productList", productList);
-        String html = templateEngine.process("allProducts", new StandardContext(webRequest, modelAndView.getModel()));
-        return new ResponseEntity<>(html, HttpStatus.OK);
-    }*/
-
-    /*@GetMapping("/all-products/search")
-    public ModelAndView searchProducts(@RequestParam("searchTerm") String searchTerm, WebRequest request) {
-        List<Product> productList = allProductsServices.searchProducts(searchTerm);
-        ModelAndView modelAndView = new ModelAndView("allProducts");
-        modelAndView.addObject("productList", productList);
-        String html = templateEngine.process("allProducts", new StandardExpressionContext(new ThymeleafEvaluationContext(request, templateEngine.getConfiguration()), modelAndView.getModel()));
-        modelAndView.addObject("responseEntity", new ResponseEntity<>(html, HttpStatus.OK));
+        modelAndView.addObject("productList", searchedList);
         return modelAndView;
-    }*/
+    }
 
+    @PostMapping("/all-products/sort")
+    public ModelAndView sortProducts(@RequestParam("sortType") String sortType){
+        List<Product> productList = allProductsServices.getAllProducts();
+        allProductsServices.sortProducts(productList, sortType);
+        ModelAndView modelAndView = new ModelAndView("allProducts");
+        modelAndView.addObject("productList", productList);
+        return modelAndView;
+    }
 
-
-
-
-
+    @PostMapping("/all-products/add-to-cart")
+    public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
+        allProductsServices.addToCart(productId, productType);
+        ModelAndView modelAndView = new ModelAndView("allProducts");
+        modelAndView.addObject("productList", allProductsServices.getAllProducts());
+        return modelAndView;
+    }
 
 }

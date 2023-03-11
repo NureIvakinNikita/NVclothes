@@ -1,8 +1,17 @@
 .myfooter {
-    position: fixed;
+
     left: 0;
     bottom: 0;
     width: auto;
     background-color: #a55c67;
 }
 
+/*
+.myfooter {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 20px;
+    background-color: #a55c67;
+}*/

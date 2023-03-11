@@ -4,7 +4,9 @@ import com.example.nvclothes.dto.TrainersDto;
 import com.example.nvclothes.entity.products.TShirtEntity;
 import com.example.nvclothes.entity.products.TrousersEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
+import com.example.nvclothes.model.Size;
 import com.example.nvclothes.repository.interfaces.TShirtEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,17 @@ public class TShirtEntityService {
         if (trainersDto.getCost() != null && trainersDto.getBrand()!=null
                 && trainersDto.getName()!=null && trainersDto.getAmount()!=null){
             TShirtEntity tShirtEntity = TShirtEntity.builder()
-                    .attribute(Attribute.BRAND.toString()).value(trainersDto.getBrand()).build();
-            tShirtEntity.setAttribute(Attribute.NAME.toString());
+                    .attribute(Attribute.BRAND.getDisplayName()).value(trainersDto.getBrand()).build();
+            tShirtEntity.setAttribute(Attribute.NAME.getDisplayName());
             tShirtEntity.setValue(trainersDto.getName());
             tShirtRepository.save(tShirtEntity);
-            tShirtEntity.setAttribute(Attribute.COST.toString());
+            tShirtEntity.setAttribute(Attribute.COST.getDisplayName());
             tShirtEntity.setValue(trainersDto.getCost().toString());
             tShirtRepository.save(tShirtEntity);
-            tShirtEntity.setAttribute(Attribute.SIZE.toString());
+            tShirtEntity.setAttribute(Attribute.SIZE.getDisplayName());
             tShirtEntity.setValue(trainersDto.getSize().toString());
             tShirtRepository.save(tShirtEntity);
-            tShirtEntity.setAttribute(Attribute.AMOUNT.toString());
+            tShirtEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             tShirtEntity.setValue(trainersDto.getAmount().toString());
             tShirtRepository.save(tShirtEntity);
         }
@@ -63,7 +65,7 @@ public class TShirtEntityService {
         for (TShirtEntity entity : list){
             switch (entity.getAttribute()){
                 case "BRAND":
-                    tShirtEntity.setBrand(entity.getValue());
+                    tShirtEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
                     break;
                 case "NAME":
                     tShirtEntity.setName(entity.getValue());
@@ -73,7 +75,7 @@ public class TShirtEntityService {
                     tShirtEntity.setCost(numericValues);
                     break;
                 case "SIZE":
-                    tShirtEntity.setSize(entity.getSize());
+                    tShirtEntity.setSize(Size.fromDisplayName(entity.getValue()));
                     break;
                 case "AMOUNT":
                     numericValues = Long.parseLong(entity.getValue());

@@ -1,5 +1,6 @@
 package com.example.nvclothes.entity.products;
 
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Getter
 public abstract class Product {
 
-    private String brand;
+    private Brand brand;
 
     private String name;
 

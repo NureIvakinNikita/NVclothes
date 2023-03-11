@@ -4,7 +4,9 @@ import com.example.nvclothes.dto.HoodieDto;
 import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
+import com.example.nvclothes.model.Size;
 import com.example.nvclothes.repository.interfaces.HoodieEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,17 @@ public class HoodieEntityService {
         if (hoodieDto.getCost() != null && hoodieDto.getBrand()!=null
                 && hoodieDto.getName()!=null && hoodieDto.getAmount()!=null){
             HoodieEntity hoodieEntity = HoodieEntity.builder()
-                    .attribute(Attribute.BRAND.toString()).value(hoodieDto.getBrand()).build();
-            hoodieEntity.setAttribute(Attribute.NAME.toString());
+                    .attribute(Attribute.BRAND.getDisplayName()).value(hoodieDto.getBrand()).build();
+            hoodieEntity.setAttribute(Attribute.NAME.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getName());
             hoodieRepository.save(hoodieEntity);
-            hoodieEntity.setAttribute(Attribute.COST.toString());
+            hoodieEntity.setAttribute(Attribute.COST.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getCost().toString());
             hoodieRepository.save(hoodieEntity);
-            hoodieEntity.setAttribute(Attribute.SIZE.toString());
+            hoodieEntity.setAttribute(Attribute.SIZE.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getSize().toString());
             hoodieRepository.save(hoodieEntity);
-            hoodieEntity.setAttribute(Attribute.AMOUNT.toString());
+            hoodieEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getAmount().toString());
             hoodieRepository.save(hoodieEntity);
         }
@@ -63,7 +65,7 @@ public class HoodieEntityService {
         for (HoodieEntity entity : list){
             switch (entity.getAttribute()){
                 case "BRAND":
-                    hoodieEntity.setBrand(entity.getValue());
+                    hoodieEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
                     break;
                 case "NAME":
                     hoodieEntity.setName(entity.getValue());
@@ -73,7 +75,7 @@ public class HoodieEntityService {
                     hoodieEntity.setCost(numericValues);
                     break;
                 case "SIZE":
-                    hoodieEntity.setSize(entity.getSize());
+                    hoodieEntity.setSize(Size.fromDisplayName(entity.getValue()));
                     break;
                 case "AMOUNT":
                     numericValues = Long.parseLong(entity.getValue());

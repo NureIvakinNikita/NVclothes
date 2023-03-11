@@ -2,6 +2,7 @@ package com.example.nvclothes.entity.products;
 
 
 import com.example.nvclothes.entity.OrderEntity;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
@@ -29,7 +30,7 @@ public class TShirtEntity extends Product{
     @Column
     private String value;
 
-    private String brand;
+    private Brand brand;
 
     private String name;
 

@@ -1,9 +1,12 @@
 package com.example.nvclothes.service;
 
+import com.example.nvclothes.dto.TrousersDto;
 import com.example.nvclothes.entity.products.TrainersEntity;
 import com.example.nvclothes.entity.products.TrousersEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
+import com.example.nvclothes.model.Size;
 import com.example.nvclothes.repository.interfaces.TrousersEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,22 +23,22 @@ public class TrousersEntityService {
 
     private final TrousersEntityRepositoryInterface trousersRepository;
 
-    public void createHoodieEntity(@RequestBody TrousersEntity trousersDto) throws Exception{
+    public void createHoodieEntity(@RequestBody TrousersDto trousersDto) throws Exception{
 
         if (trousersDto.getCost() != null && trousersDto.getBrand()!=null
                 && trousersDto.getName()!=null && trousersDto.getAmount()!=null){
             TrousersEntity trousersEntity = TrousersEntity.builder()
-                    .attribute(Attribute.BRAND.toString()).value(trousersDto.getBrand()).build();
-            trousersEntity.setAttribute(Attribute.NAME.toString());
+                    .attribute(Attribute.BRAND.getDisplayName()).value(trousersDto.getBrand()).build();
+            trousersEntity.setAttribute(Attribute.NAME.getDisplayName());
             trousersEntity.setValue(trousersDto.getName());
             trousersRepository.save(trousersEntity);
-            trousersEntity.setAttribute(Attribute.COST.toString());
+            trousersEntity.setAttribute(Attribute.COST.getDisplayName());
             trousersEntity.setValue(trousersDto.getCost().toString());
             trousersRepository.save(trousersEntity);
-            trousersEntity.setAttribute(Attribute.SIZE.toString());
+            trousersEntity.setAttribute(Attribute.SIZE.getDisplayName());
             trousersEntity.setValue(trousersDto.getSize().toString());
             trousersRepository.save(trousersEntity);
-            trousersEntity.setAttribute(Attribute.AMOUNT.toString());
+            trousersEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             trousersEntity.setValue(trousersDto.getAmount().toString());
             trousersRepository.save(trousersEntity);
         }
@@ -63,7 +66,7 @@ public class TrousersEntityService {
         for (TrousersEntity entity : list){
             switch (entity.getAttribute()){
                 case "BRAND":
-                    trousersEntity.setBrand(entity.getValue());
+                    trousersEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
                     break;
                 case "NAME":
                     trousersEntity.setName(entity.getValue());
@@ -73,7 +76,7 @@ public class TrousersEntityService {
                     trousersEntity.setCost(numericValues);
                     break;
                 case "SIZE":
-                    trousersEntity.setSize(entity.getSize());
+                    trousersEntity.setSize(Size.fromDisplayName(entity.getValue()));
                     break;
                 case "AMOUNT":
                     numericValues = Long.parseLong(entity.getValue());

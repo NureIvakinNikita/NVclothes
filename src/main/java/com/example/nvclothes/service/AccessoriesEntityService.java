@@ -3,6 +3,7 @@ package com.example.nvclothes.service;
 import com.example.nvclothes.dto.AccessoriesDto;
 import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.repository.interfaces.AccessoriesEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +30,16 @@ public class AccessoriesEntityService {
         if (accessoriesDto.getCost() != null && accessoriesDto.getBrand()!=null
                 && accessoriesDto.getName()!=null && accessoriesDto.getAmount()!=null){
             AccessoriesEntity accessoriesEntity = AccessoriesEntity.builder()
-                    .attribute(Attribute.BRAND.toString()).value(accessoriesDto.getBrand()).build();
+                    .attribute(Attribute.BRAND.getDisplayName()).value(accessoriesDto.getBrand()).build();
 
             accessoriesEntity.setAccessoriesId(++count);
-            accessoriesEntity.setAttribute(Attribute.NAME.toString());
+            accessoriesEntity.setAttribute(Attribute.NAME.getDisplayName());
             accessoriesEntity.setValue(accessoriesDto.getName());
             accessoriesRepository.save(accessoriesEntity);
-            accessoriesEntity.setAttribute(Attribute.COST.toString());
+            accessoriesEntity.setAttribute(Attribute.COST.getDisplayName());
             accessoriesEntity.setValue(accessoriesDto.getCost().toString());
             accessoriesRepository.save(accessoriesEntity);
-            accessoriesEntity.setAttribute(Attribute.AMOUNT.toString());
+            accessoriesEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             accessoriesEntity.setValue(accessoriesDto.getAmount().toString());
             accessoriesRepository.save(accessoriesEntity);
 
@@ -67,7 +68,7 @@ public class AccessoriesEntityService {
         for (AccessoriesEntity entity : list){
             switch (entity.getAttribute()){
                 case "BRAND":
-                    accessoriesEntity.setBrand(entity.getValue());
+                    accessoriesEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
                     break;
                 case "NAME":
                     accessoriesEntity.setName(entity.getValue());

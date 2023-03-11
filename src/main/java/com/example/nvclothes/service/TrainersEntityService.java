@@ -4,7 +4,9 @@ import com.example.nvclothes.dto.TrainersDto;
 import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.entity.products.TrainersEntity;
 import com.example.nvclothes.model.Attribute;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
+import com.example.nvclothes.model.Size;
 import com.example.nvclothes.repository.interfaces.TrainersEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,17 +28,17 @@ public class TrainersEntityService {
         if (trainersDto.getCost() != null && trainersDto.getBrand()!=null
                 && trainersDto.getName()!=null && trainersDto.getAmount()!=null){
             TrainersEntity trainersEntity = TrainersEntity.builder()
-                    .attribute(Attribute.BRAND.toString()).value(trainersDto.getBrand()).build();
-            trainersEntity.setAttribute(Attribute.NAME.toString());
+                    .attribute(Attribute.BRAND.getDisplayName()).value(trainersDto.getBrand()).build();
+            trainersEntity.setAttribute(Attribute.NAME.getDisplayName());
             trainersEntity.setValue(trainersDto.getName());
             trainersRepository.save(trainersEntity);
-            trainersEntity.setAttribute(Attribute.COST.toString());
+            trainersEntity.setAttribute(Attribute.COST.getDisplayName());
             trainersEntity.setValue(trainersDto.getCost().toString());
             trainersRepository.save(trainersEntity);
-            trainersEntity.setAttribute(Attribute.SIZE.toString());
+            trainersEntity.setAttribute(Attribute.SIZE.getDisplayName());
             trainersEntity.setValue(trainersDto.getSize().toString());
             trainersRepository.save(trainersEntity);
-            trainersEntity.setAttribute(Attribute.AMOUNT.toString());
+            trainersEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             trainersEntity.setValue(trainersDto.getAmount().toString());
             trainersRepository.save(trainersEntity);
         }
@@ -64,7 +66,7 @@ public class TrainersEntityService {
         for (TrainersEntity entity : list){
             switch (entity.getAttribute()){
                 case "BRAND":
-                    trainersEntity.setBrand(entity.getValue());
+                    trainersEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
                     break;
                 case "NAME":
                     trainersEntity.setName(entity.getValue());
@@ -74,7 +76,7 @@ public class TrainersEntityService {
                     trainersEntity.setCost(numericValues);
                     break;
                 case "SIZE":
-                    trainersEntity.setSize(entity.getSize());
+                    trainersEntity.setSize(Size.fromDisplayName(entity.getValue()));
                     break;
                 case "AMOUNT":
                     numericValues = Long.parseLong(entity.getValue());
