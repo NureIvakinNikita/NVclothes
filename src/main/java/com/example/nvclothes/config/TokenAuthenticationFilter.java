@@ -1,6 +1,4 @@
 package com.example.nvclothes.config;
 
-public class SpringConfig{
-
-
+public class TokenAuthentificator {
 }
