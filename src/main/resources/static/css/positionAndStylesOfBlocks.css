@@ -14,3 +14,20 @@
     height: 100%;
     background-color: #f4ebdb;
 }
+
+.background{
+    background-color: #f4ebdb;
+}
+
+.rcenter div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+p, input {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}

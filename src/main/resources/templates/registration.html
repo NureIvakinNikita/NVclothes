@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All products</title>
+
+    <!--    <link href="/css/footer.css" rel="stylesheet">-->
+    <link href="/css/welcome.css" rel="stylesheet">
+    <link href="/css/font.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+    <link href="/css/positionAndStylesOfBlocks.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrapMint2.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <!--    <link th:href="@{/css/footer.css}" rel="stylesheet">-->
+    <!--    <link href="/css/navbar.css" rel="stylesheet">-->
+
+</head>
+<body style="background-color: #f4ebdb;">
+<div th:replace="header :: header"></div>
+<div class="my-block" style="background-color: #f4ebdb">
+    <p class="myFontStyle" style="font-size: 25px">Create your personal account</p>
+</div>
+<form th:action="@{/no-auth/registration/create}" method="post">
+    <div class="row" style="background-color: #f4ebdb; ">
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Enter your firstname:</p>
+                <input class="form-control" style="width: 60%;" type="text"  name="name">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Enter your email:</p>
+                <input class="form-control" style="width: 60%;" type="text" name="email">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Create your password:</p>
+                <input class="form-control" style="width: 60%;" type="password" name="password">
+            </div>
+        </div>
+    </div>
+    <div class="row" style="background-color: #f4ebdb">
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Enter your last name:</p>
+                <input class="form-control" style="width: 60%;" type="text"  name="lastName" >
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Enter your telephone number:</p>
+                <input class="form-control" style="width: 60%;" type="text"  name="telephoneNumber" >
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div style="margin-left: 20%; font-family: 'Itim', cursive; color: black;">
+                <p>Confirm your password:</p>
+                <input class="form-control" style="width: 60%;" type="password"  name="password2">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center" style="background-color: #f4ebdb">
+        <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Create</button>
+    </div>
+</form>
+<div th:replace="footer :: footer" ></div>
+</body>
+</html>

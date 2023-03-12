@@ -25,7 +25,7 @@ public class AllProductsController {
 
     private List<Product> searchedList = null;
 
-    @GetMapping("/all-products")
+    @GetMapping("/no-auth/all-products")
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
             List<Product> productList = new ArrayList<>();
             if (searchedList != null) {
@@ -38,7 +38,7 @@ public class AllProductsController {
             return modelAndView;
     }
 
-    @PostMapping("/all-products/search")
+    @PostMapping("/no-auth/all-products/search")
     public ModelAndView searchProducts(@RequestParam("search") String name) {
         if (searchedList != null) {
             searchedList = allProductsServices.searchWithFilter(searchedList, name);
@@ -51,7 +51,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/all-products/filtered")
+    @PostMapping("/no-auth/all-products/filtered")
     public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("cost") String cost,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
@@ -63,7 +63,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/all-products/clear")
+    @PostMapping("/no-auth/all-products/clear")
     public ModelAndView clearFilters(){
         searchedList = allProductsServices.getAllProducts();
         ModelAndView modelAndView = new ModelAndView("allProducts");
@@ -71,7 +71,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/all-products/sort")
+    @PostMapping("/no-auth/all-products/sort")
     public ModelAndView sortProducts(@RequestParam("sortType") String sortType){
         List<Product> productList = allProductsServices.getAllProducts();
         allProductsServices.sortProducts(productList, sortType);
@@ -80,7 +80,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/all-products/add-to-cart")
+    @PostMapping("/auth/all-products/add-to-cart")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
         allProductsServices.addToCart(productId, productType);
         ModelAndView modelAndView = new ModelAndView("allProducts");
