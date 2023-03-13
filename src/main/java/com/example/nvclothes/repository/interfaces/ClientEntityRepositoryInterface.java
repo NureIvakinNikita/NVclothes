@@ -16,5 +16,9 @@ public interface ClientEntityRepositoryInterface extends JpaRepository<ClientEnt
 
     void deleteClientEntityById(@Param("id") Long id);
 
+    ClientEntity getClientEntityByName(@Param("name")String name);
+
+    String getStudentEntityPasswordByEmail(@Param("email") String email);
+
 
 }

@@ -3,6 +3,7 @@ package com.example.nvclothes.controller;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.service.AllProductsServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ public class AllProductsController {
 
     private List<Product> searchedList = null;
 
-    @GetMapping("/no-auth/all-products")
+    @GetMapping("/all-products")
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
             List<Product> productList = new ArrayList<>();
             if (searchedList != null) {
@@ -38,7 +39,7 @@ public class AllProductsController {
             return modelAndView;
     }
 
-    @PostMapping("/no-auth/all-products/search")
+    @PostMapping("/all-products/search")
     public ModelAndView searchProducts(@RequestParam("search") String name) {
         if (searchedList != null) {
             searchedList = allProductsServices.searchWithFilter(searchedList, name);
@@ -51,7 +52,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/no-auth/all-products/filtered")
+    @PostMapping("/all-products/filtered")
     public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("cost") String cost,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
@@ -63,7 +64,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/no-auth/all-products/clear")
+    @PostMapping("/all-products/clear")
     public ModelAndView clearFilters(){
         searchedList = allProductsServices.getAllProducts();
         ModelAndView modelAndView = new ModelAndView("allProducts");
@@ -71,7 +72,7 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/no-auth/all-products/sort")
+    @PostMapping("/all-products/sort")
     public ModelAndView sortProducts(@RequestParam("sortType") String sortType){
         List<Product> productList = allProductsServices.getAllProducts();
         allProductsServices.sortProducts(productList, sortType);
@@ -80,7 +81,8 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/auth/all-products/add-to-cart")
+    @PostMapping("/all-products/add-to-cart")
+    @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
         allProductsServices.addToCart(productId, productType);
         ModelAndView modelAndView = new ModelAndView("allProducts");

@@ -18,7 +18,22 @@
 </head>
 <body class="background">
 <div th:replace="header :: header"></div>
-
+<div class="my-block" style="background-color: #f4ebdb">
+    <p class="myFontStyleBlack" style="font-size: 25px">Log in</p>
+</div>
+<form th:action="@{/login}" method="post">
+    <div class="row rcenter myFontStyleBlack">
+        <p>Enter your email</p>
+        <input class="form-control" style="width: 30%;" type="text" name="email"/>
+    </div>
+    <div class="row rcenter myFontStyleBlack">
+        <p>Enter your password</p>
+        <input class="form-control" style="width: 30%;" type="password" name="password"/>
+    </div>
+    <div class="row rcenter">
+        <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Log in</button>
+    </div>
+</form>
 <div th:replace="footer :: footer"></div>
 </body>
 </html>

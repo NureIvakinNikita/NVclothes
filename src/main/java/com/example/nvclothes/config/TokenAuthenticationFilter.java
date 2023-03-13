@@ -1,10 +1,13 @@
 package com.example.nvclothes.config;
 
+import com.example.nvclothes.service.ClientEntityService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,13 +18,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -32,9 +40,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
+                String userEmail = tokenProvider.getUserEmailFromToken(jwt);
+                UserDetails userDetails;
+                if (userEmail.equals("admin@gmail.com")){
+                    userDetails= new User(userId.toString(), "null",
+                            List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN")));
+                } else {
+                    userDetails = new User(userId.toString(), "null",
+                            List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                }
 
-                UserDetails userDetails = new User(userId.toString(), "null",
-                        List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
@@ -59,4 +74,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         return null;
     }
+
+
 }
