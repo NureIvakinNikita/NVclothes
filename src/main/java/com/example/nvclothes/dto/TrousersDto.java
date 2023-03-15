@@ -10,6 +10,7 @@ public class TrousersDto {
     private Long trousersId;
     private String attribute;
     private String value;
+    private String photo;
     private String brand;
     private String name;
     private Long cost;

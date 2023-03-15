@@ -1,7 +1,7 @@
 package com.example.nvclothes.controller;
 
 import com.example.nvclothes.entity.products.Product;
-import com.example.nvclothes.service.AccessoriesEntityService;
+import com.example.nvclothes.service.TShirtEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,80 +16,80 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-public class AccessoriesController {
+public class TShirtsController {
 
     @Autowired
-    private AccessoriesEntityService accessoriesService;
+    private TShirtEntityService tShirtService;
 
     @Autowired
     private SpringTemplateEngine templateEngine;
 
     private List<Product> searchedList = null;
 
-    @GetMapping("/accessories")
+    @GetMapping("/t-shirts")
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
         List<Product> productList = new ArrayList<>();
         if (searchedList != null) {
             Collections.copy(searchedList, productList);
         } else {
-            productList.addAll(accessoriesService.getAllAccessoriesEntities());
+            productList.addAll(tShirtService.getAllTShirtEntities());
         }
-        modelAndView.setViewName("accessories");
+        modelAndView.setViewName("t-shirts");
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/search")
+    @PostMapping("/t-shirts/search")
     public ModelAndView searchProducts(@RequestParam("search") String name) {
         if (searchedList != null) {
-            searchedList = accessoriesService.searchWithFilter(searchedList, name);
+            searchedList = tShirtService.searchWithFilter(searchedList, name);
         } else {
-            searchedList = accessoriesService.searchProducts(name);
+            searchedList = tShirtService.searchProducts(name);
         }
 
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        ModelAndView modelAndView = new ModelAndView("t-shirts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/filtered")
+    @PostMapping("/t-shirts/filtered")
     public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("costFrom") String costFrom,
                                        @RequestParam("costTo") String costTo,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
-            searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
+            searchedList.addAll(tShirtService.getAllTShirtEntities());
         }
-        searchedList = accessoriesService.filter(searchedList, size, costFrom, costTo,brand,productType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        searchedList = tShirtService.filter(searchedList, size, costFrom, costTo,brand,productType);
+        ModelAndView modelAndView = new ModelAndView("t-shirts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/clear")
+    @PostMapping("/t-shirts/clear")
     public ModelAndView clearFilters(){
-        searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        searchedList.addAll(tShirtService.getAllTShirtEntities());
+        ModelAndView modelAndView = new ModelAndView("t-shirts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/sort")
+    @PostMapping("/t-shirts/sort")
     public ModelAndView sortProducts(@RequestParam("sortType") String sortType){
         List<Product> productList = new ArrayList<>();
-        productList.addAll(accessoriesService.getAllAccessoriesEntities());
-        accessoriesService.sortProducts(productList, sortType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        productList.addAll(tShirtService.getAllTShirtEntities());
+        tShirtService.sortProducts(productList, sortType);
+        ModelAndView modelAndView = new ModelAndView("t-shirts");
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/add-to-cart")
+    @PostMapping("/t-shirts/add-to-cart")
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
-        accessoriesService.addToCart(productId, productType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        tShirtService.addToCart(productId, productType);
+        ModelAndView modelAndView = new ModelAndView("t-shirts");
         List<Product> productList = new ArrayList<>();
-        productList.addAll(accessoriesService.getAllAccessoriesEntities());
+        productList.addAll(tShirtService.getAllTShirtEntities());
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }

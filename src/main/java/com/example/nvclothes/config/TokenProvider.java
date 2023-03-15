@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Component
 public class TokenProvider {
 
-    private static final String SECRET = "${SECRET}";
+    private static final String SECRET = System.getenv("MY_SECRET");
 
     public String createToken(Long id,String email){
         return Jwts.builder()

@@ -68,3 +68,9 @@ databaseChangeLog:
   - include:
       file: 023-alter-table-client-drop-birthday-not-null.sql
       relativeToChangelogFile: true
+  - include:
+      file: 024-added-photo-to-all-products.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 025-added-photos-to-products.sql
+      relativeToChangelogFile: true

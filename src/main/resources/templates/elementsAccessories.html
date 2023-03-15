@@ -1,0 +1,70 @@
+<div class = "elements-block"  th:fragment="elementsAccessories">
+    <div class="row">
+        <div class="col-md-3" >
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; padding-left: 10px">Filters</p>
+        </div>
+        <div class="col-md-9">
+            <form class="d-flex" th:action="@{/accessories/sort}" method="post">
+
+                <select class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none;" name="sortType">Order by<i class="bi bi-caret-down-fill" style="color: black"></i>
+                    <option>Order by</option>
+                    <option>By brand name from a to z</option>
+                    <option>By brand name from z to a</option>
+                    <option>By price from low to high</option>wk
+                    <option>By price from high to low</option>
+                    <option>By popularity</option>
+                </select>
+
+                <button  class="btn btn-danger my-2 center"  type="submit" style="font-family: 'Itim', cursive; margin-top: 20px; margin-left: 10px;">Sort</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-3">
+            <div  style="padding-left: 10px">
+                <form th:action="@{/accessories/filtered}" method="post">
+
+                    <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Cost of product</p>
+                    <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">From</p>
+                    <input class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="costFrom" type="text">
+                    <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">To</p>
+                    <input class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="costTo" type="text">
+
+                    <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Brand of product</p>
+                    <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="brand">Brand<i class="bi bi-caret-down-fill"></i>
+                        <option>All</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                        <option>Brand 1</option>
+                    </select>
+                    <br>
+                    <button class="btn btn-secondary form-control" type="submit" style="font-family: 'Itim', cursive;">Accept filters</button>
+                </form>
+                <form th:action="@{/accessories/clear}" method="post">
+                    <button  class="btn btn-danger form-control"  type="submit" style="font-family: 'Itim', cursive; margin-top: 5px;">Remove all filters</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="col-md-9">
+            <div class="row" >
+                <div class="col-md-3" th:each="product : ${productList}">
+                    <img class="img-thumbnail" sizes="(min-width: 768px) 302px, 600px" th:src="@{${product.photo}}"/>
+                    <div>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Brand: ' + ${product.brand}"></p>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Name: ' + ${product.name}"></p>
+                    </div>
+                    <div style="margin-top: 1%">
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Cost: ' + ${product.cost}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

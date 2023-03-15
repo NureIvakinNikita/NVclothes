@@ -53,12 +53,13 @@ public class AllProductsController {
     }
 
     @PostMapping("/all-products/filtered")
-    public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("cost") String cost,
+    public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("costFrom") String costFrom,
+                                       @RequestParam("costTo") String costTo,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
             searchedList = allProductsServices.getAllProducts();
         }
-        searchedList = allProductsServices.filter(searchedList, size, cost,brand,productType);
+        searchedList = allProductsServices.filter(searchedList, size, costFrom, costTo ,brand,productType);
         ModelAndView modelAndView = new ModelAndView("allProducts");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;

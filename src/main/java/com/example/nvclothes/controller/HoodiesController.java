@@ -1,7 +1,7 @@
 package com.example.nvclothes.controller;
 
 import com.example.nvclothes.entity.products.Product;
-import com.example.nvclothes.service.AccessoriesEntityService;
+import com.example.nvclothes.service.HoodieEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,80 +16,79 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-public class AccessoriesController {
-
+public class HoodiesController {
     @Autowired
-    private AccessoriesEntityService accessoriesService;
+    private HoodieEntityService hoodiesServices;
 
     @Autowired
     private SpringTemplateEngine templateEngine;
 
     private List<Product> searchedList = null;
 
-    @GetMapping("/accessories")
+    @GetMapping("/hoodies")
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
         List<Product> productList = new ArrayList<>();
         if (searchedList != null) {
             Collections.copy(searchedList, productList);
         } else {
-            productList.addAll(accessoriesService.getAllAccessoriesEntities());
+            productList.addAll(hoodiesServices.getAllHoodieEntities());
         }
-        modelAndView.setViewName("accessories");
+        modelAndView.setViewName("hoodies");
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/search")
+    @PostMapping("/hoodies/search")
     public ModelAndView searchProducts(@RequestParam("search") String name) {
         if (searchedList != null) {
-            searchedList = accessoriesService.searchWithFilter(searchedList, name);
+            searchedList = hoodiesServices.searchWithFilter(searchedList, name);
         } else {
-            searchedList = accessoriesService.searchProducts(name);
+            searchedList = hoodiesServices.searchProducts(name);
         }
 
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/filtered")
+    @PostMapping("/hoodies/filtered")
     public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("costFrom") String costFrom,
                                        @RequestParam("costTo") String costTo,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
-            searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
+            searchedList.addAll(hoodiesServices.getAllHoodieEntities());
         }
-        searchedList = accessoriesService.filter(searchedList, size, costFrom, costTo,brand,productType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        searchedList = hoodiesServices.filter(searchedList, size, costFrom, costTo,brand,productType);
+        ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/clear")
+    @PostMapping("/hoodies/clear")
     public ModelAndView clearFilters(){
-        searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        searchedList.addAll(hoodiesServices.getAllHoodieEntities());
+        ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/sort")
+    @PostMapping("/hoodies/sort")
     public ModelAndView sortProducts(@RequestParam("sortType") String sortType){
         List<Product> productList = new ArrayList<>();
-        productList.addAll(accessoriesService.getAllAccessoriesEntities());
-        accessoriesService.sortProducts(productList, sortType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        productList.addAll(hoodiesServices.getAllHoodieEntities());
+        hoodiesServices.sortProducts(productList, sortType);
+        ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }
 
-    @PostMapping("/accessories/add-to-cart")
+    @PostMapping("/hoodies/add-to-cart")
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
-        accessoriesService.addToCart(productId, productType);
-        ModelAndView modelAndView = new ModelAndView("accessories");
+        hoodiesServices.addToCart(productId, productType);
+        ModelAndView modelAndView = new ModelAndView("hoodies");
         List<Product> productList = new ArrayList<>();
-        productList.addAll(accessoriesService.getAllAccessoriesEntities());
+        productList.addAll(hoodiesServices.getAllHoodieEntities());
         modelAndView.addObject("productList", productList);
         return modelAndView;
     }

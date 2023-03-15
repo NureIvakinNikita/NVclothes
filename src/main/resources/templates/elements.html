@@ -35,10 +35,11 @@
                         </select>
 
                         <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Cost of product</p>
-                        <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="cost">Cost<i class="bi bi-caret-down-fill"></i>
-                            <option>All</option>
-                            <option>XXL</option>
-                        </select>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">From</p>
+                        <input class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="costFrom" type="text">
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">To</p>
+                        <input class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="costTo" type="text">
+
 
                         <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Size of product</p>
                         <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="size">Select size<i class="bi bi-caret-down-fill"></i>
@@ -74,18 +75,21 @@
 
 
         <div class="col-md-9">
-            <div class="row" >
+            <div class="row" style="margin-top: 2%;">
                 <div class="col-md-3" th:each="product : ${productList}">
-                    <!--                <img class="img-thumbnail" sizes="(min-width: 768px) 317px, 238px" th:src="@{${product.imagePath}}"/>-->
+                    <img class="img-thumbnail" sizes="(min-width: 768px) 302px, 600px" th:src="@{${product.photo}}"/>
                     <div>
                         <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Brand: ' + ${product.brand}"></p>
                         <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Name: ' + ${product.name}"></p>
                     </div>
-                    <p>Size:</p>
+                    <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">Size:</p>
 
                     <div style="margin-top: 1%">
-                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Cost: ' + ${product.cost}"></p>
+                        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;" th:text="'Cost: ' + ${product.cost}"><p style="font-family: 'Itim', cursive;color: black;text-decoration: none;">£</p></p>
                     </div>
+                    <form th:action="@{/all-products/add-to-cart}" method="post">
+                        <button  class="btn btn-success form-control"  type="submit" style="font-family: 'Itim', cursive; margin-top: 5px;">Add to cart</button>
+                    </form>
                 </div>
             </div>
         </div>

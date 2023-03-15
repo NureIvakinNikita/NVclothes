@@ -13,6 +13,7 @@ public class AccessoriesDto {
     private Long accessoriesId;
     private String attribute;
     private String value;
+    private String photo;
     private String brand;
     private String name;
     private Long cost;

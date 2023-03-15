@@ -9,6 +9,8 @@ import lombok.Setter;
 @Getter
 public abstract class Product {
 
+
+    private String photo;
     private Brand brand;
 
     private String name;

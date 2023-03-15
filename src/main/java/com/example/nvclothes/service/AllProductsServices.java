@@ -1,8 +1,8 @@
 package com.example.nvclothes.service;
 
-import com.example.nvclothes.entity.products.Product;
+import com.example.nvclothes.entity.products.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class AllProductsServices {
         list.addAll(accessoriesEntityService.getAllAccessoriesEntities());
         list.addAll(hoodieEntityService.getAllHoodieEntities());
         list.addAll(trousersEntityService.getAllTrousersEntities());
-        list.addAll(tShirtEntityService.getAllTrousersEntities());
+        list.addAll(tShirtEntityService.getAllTShirtEntities());
         list.addAll(trainersEntityService.getAllTrainersEntities());
 
         return list;
@@ -50,9 +50,10 @@ public class AllProductsServices {
     }
 
     public List<Product> filter(List<Product> searchedList, String size,
-                                String cost, String brand, String productType){
+                                String costFrom, String costTo, String brand, String productType){
         ListIterator<Product> iterator = searchedList.listIterator();
-        String sizeE, costE, productTypeE;
+        String sizeE, productTypeE;
+        Long costF, costT, costP;
         while (iterator.hasNext()){
             Product product = iterator.next();
             if (!product.getProductType().getDisplayName().equals("Accessories")) {
@@ -61,10 +62,12 @@ public class AllProductsServices {
             else {
                 sizeE ="";
             }
-            costE = product.getCost().toString();
+            costP = product.getCost();
+            costF = Long.parseLong(costFrom);
+            costT = Long.parseLong(costTo);
             productTypeE = product.getProductType().getDisplayName();
             if (!((sizeE.equals(size) || size.equals("All")) &&
-                    (costE.equals(cost) || cost.equals("All")) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)) &&
                     (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
                     (productTypeE.equals(productType) || productType.equals("All")))){
                 iterator.remove();
@@ -113,7 +116,49 @@ public class AllProductsServices {
     }
 
     public void addToCart(Long productId, String productType){
+        List<Product> productList = new ArrayList<>();
+        productList.addAll(this.getAllProducts());
+        for (Product product : productList){
+            switch (product.getProductType()){
+                case HOODIE:
+                    HoodieEntity hoodieEntity = (HoodieEntity) product;
+                    if (hoodieEntity.getHoodieId() == productId){
 
+                        return;
+                    }
+                    break;
+                case TSHIRT:
+                    TShirtEntity tShirtEntity = (TShirtEntity) product;
+                    if (tShirtEntity.getTShirtId() == productId){
+
+                        return;
+                    }
+                    break;
+                case TRAINERS:
+                    TrainersEntity trainersEntity = (TrainersEntity) product;
+                    if (trainersEntity.getTrainersId() == productId){
+
+                        return;
+                    }
+                    break;
+                case TROUSERS:
+                    TrousersEntity trousersEntity = (TrousersEntity) product;
+                    if (trousersEntity.getTrousersId() == productId){
+
+                        return;
+                    }
+                    break;
+                case ACCESSORY:
+                    AccessoriesEntity accessoriesEntity = (AccessoriesEntity) product;
+                    if (accessoriesEntity.getAccessoriesId() == productId){
+
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 

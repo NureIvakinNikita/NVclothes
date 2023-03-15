@@ -32,6 +32,7 @@ public class HoodieEntity extends Product{
     @Column
     private String value;
 
+    private String photo;
     private Brand brand;
 
     private String name;
