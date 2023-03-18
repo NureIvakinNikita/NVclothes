@@ -7,6 +7,8 @@ import com.example.nvclothes.dto.TrainersDto;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.entity.products.TShirtEntity;
 import com.example.nvclothes.entity.products.TrousersEntity;
+import com.example.nvclothes.exception.TShirtNotFoundException;
+import com.example.nvclothes.exception.TrousersNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
@@ -49,12 +51,53 @@ public class TShirtEntityService {
 
     }
 
-    public TShirtEntity getTShirtEntityById(Long id){
-        return tShirtRepository.getTShirtEntitiesById(id).get();
+    public TShirtEntity getTShirtEntityById(Long id) throws TShirtNotFoundException{
+        List<TShirtEntity> tShirt = tShirtRepository.getTShirtEntitiesByProductId(id);
+        TShirtEntity trousersEntity = TShirtEntity.builder().build();
+        Long numericValues;
+        if (tShirt.size() == 0) {
+            throw new TShirtNotFoundException("T-shirt not found for id: " + id);
+        } else {
+            for (TShirtEntity entity : tShirt) {
+                switch (entity.getAttribute()) {
+                    case "BRAND":
+                        trousersEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
+                        break;
+                    case "NAME":
+                        trousersEntity.setName(entity.getValue());
+                        break;
+                    case "COST":
+                        numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                        trousersEntity.setCost(numericValues);
+                        break;
+                    case "SIZE":
+                        trousersEntity.setSize(Size.fromDisplayName(entity.getValue()));
+                        break;
+                    case "AMOUNT":
+                        numericValues = Long.parseLong(entity.getValue());
+                        trousersEntity.setAmount(numericValues);
+                        trousersEntity.setId(entity.getId());
+                        trousersEntity.setProductId(entity.getProductId());
+                        trousersEntity.setProductType(ProductType.TSHIRT);
+                        trousersEntity.setPhoto(entity.getPhoto());
+                        return trousersEntity;
+                    default:
+                        break;
+                }
+
+            }
+        }
+        throw new TShirtNotFoundException("T-shirt not found for id: " + id);
     }
 
-    public List<TShirtEntity> getTShirtEntitiesByBrand(String brand){
-        return  tShirtRepository.getTShirtEntitiesByBrand(brand);
+    public List<TShirtEntity> getTShirtEntitiesByBrand(String brand) throws TShirtNotFoundException{
+        List<TShirtEntity> tShirts = new ArrayList<>();
+        tShirts.addAll(tShirtRepository.getTShirtEntitiesByBrand(brand));
+        if (tShirts.size() == 0) {
+            throw new TShirtNotFoundException("T-shirt not found for brand: " + brand);
+        }
+
+        return tShirts;
     }
 
     public List<TShirtEntity> getAllTShirtEntities(){
@@ -83,7 +126,7 @@ public class TShirtEntityService {
                     numericValues = Long.parseLong(entity.getValue());
                     tShirtEntity.setAmount(numericValues);
                     tShirtEntity.setId(entity.getId());
-                    tShirtEntity.setTShirtId(entity.getTShirtId());
+                    tShirtEntity.setProductId(entity.getProductId());
                     tShirtEntity.setProductType(ProductType.TSHIRT);
                     tShirtEntity.setPhoto(entity.getPhoto());
                     entities.add(tShirtEntity);
@@ -122,12 +165,25 @@ public class TShirtEntityService {
             else {
                 sizeE ="";
             }
+            if (costFrom.equals("")) costFrom="0";
+            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
+            try {
+                costF = Long.parseLong(costFrom);
+                costT = Long.parseLong(costTo);
+            } catch (Exception e){
+                costFrom="0";
+                costTo="0";
+                costF = 0L;
+                costT = 0L;
+            }
             costF = Long.parseLong(costFrom);
             costT = Long.parseLong(costTo);
+            if (costF < 0) costF = 0L;
+            if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
             if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
                     (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
                     (productTypeE.equals(productType) || productType.equals("All")))){
                 iterator.remove();
@@ -188,7 +244,7 @@ public class TShirtEntityService {
         Cloudinary cloudinary = new Cloudinary(config);
         List<TShirtEntity> list = new ArrayList<>();
         list.addAll(getAllTShirtEntities());
-        Long tShirtId = list.get(list.size()).getTShirtId();
+        Long tShirtId = list.get(list.size()).getProductId();
         try {
             cloudinary.uploader().upload(hoodiePhoto, ObjectUtils.asMap("public_id", "t_shirt_"+tShirtId));
         } catch (IOException exception) {

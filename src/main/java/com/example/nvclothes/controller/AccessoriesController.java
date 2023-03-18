@@ -4,6 +4,8 @@ import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.service.AccessoriesEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +36,16 @@ public class AccessoriesController {
         } else {
             productList.addAll(accessoriesService.getAllAccessoriesEntities());
         }
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         modelAndView.setViewName("accessories");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -46,9 +56,16 @@ public class AccessoriesController {
         } else {
             searchedList = accessoriesService.searchProducts(name);
         }
-
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("accessories");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -59,17 +76,33 @@ public class AccessoriesController {
         if (searchedList == null){
             searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
         }
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         searchedList = accessoriesService.filter(searchedList, size, costFrom, costTo,brand,productType);
         ModelAndView modelAndView = new ModelAndView("accessories");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
     @PostMapping("/accessories/clear")
     public ModelAndView clearFilters(){
         searchedList.addAll(accessoriesService.getAllAccessoriesEntities());
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("accessories");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -78,8 +111,16 @@ public class AccessoriesController {
         List<Product> productList = new ArrayList<>();
         productList.addAll(accessoriesService.getAllAccessoriesEntities());
         accessoriesService.sortProducts(productList, sortType);
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("accessories");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -87,10 +128,18 @@ public class AccessoriesController {
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
         accessoriesService.addToCart(productId, productType);
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("accessories");
         List<Product> productList = new ArrayList<>();
         productList.addAll(accessoriesService.getAllAccessoriesEntities());
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 }

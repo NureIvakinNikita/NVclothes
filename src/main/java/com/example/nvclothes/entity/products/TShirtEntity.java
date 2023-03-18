@@ -1,12 +1,15 @@
 package com.example.nvclothes.entity.products;
 
 
+import com.example.nvclothes.entity.CartProductEntity;
 import com.example.nvclothes.entity.OrderEntity;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -21,8 +24,8 @@ public class TShirtEntity extends Product{
     @Column
     private Long id;
 
-    @Column
-    private Long tShirtId;
+    @Column(name = "t_shirt_id")
+    private Long productId;
 
     @Column
     private String attribute;
@@ -51,4 +54,7 @@ public class TShirtEntity extends Product{
             inverseJoinColumns =
                     { @JoinColumn(name = "order_id", referencedColumnName = "id") })
     private OrderEntity order;
+
+    @OneToMany(mappedBy = "tShirt")
+    private List<CartProductEntity> cartProductEntities;
 }

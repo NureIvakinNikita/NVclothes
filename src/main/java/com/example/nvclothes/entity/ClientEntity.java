@@ -1,6 +1,5 @@
 package com.example.nvclothes.entity;
 
-import com.example.nvclothes.model.Role;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -9,11 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,7 +21,7 @@ import java.util.*;
 @Builder
 @AllArgsConstructor
 @Access(AccessType.FIELD)
-public class ClientEntity implements UserDetails {
+public class ClientEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +37,6 @@ public class ClientEntity implements UserDetails {
     @Pattern(regexp = "^[a-zA-Z]*$", message = "Last name isn't assigned properly it must contain letters from a to z and A to Z")
     private String lastName;
 
-    @Override
-    public String getUsername() {
-        return name;
-    }
 
     @Column
     @NotBlank(message = "Email cannot be empty")
@@ -68,41 +63,16 @@ public class ClientEntity implements UserDetails {
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
     private CartEntity cart_id;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        for (var r : this.role) {
-            var sga = new SimpleGrantedAuthority(r.name());
-            authorities.add(sga);
-        }
-        return authorities;
-    }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
     @OneToMany(mappedBy = "client")
     private List<OrderClientEntity> orders;
 
-    @Column
+   /* @Column
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> role = new HashSet<>();
+    private Set<Role> role = new HashSet<>();*/
+
+
 
 }

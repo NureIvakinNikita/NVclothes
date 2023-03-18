@@ -4,6 +4,8 @@ import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.service.TrousersEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,12 +31,20 @@ public class TrousersController {
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
         List<Product> productList = new ArrayList<>();
         if (searchedList != null) {
-            Collections.copy(searchedList, productList);
+            productList.addAll(searchedList);
         } else {
             productList.addAll(trousersService.getAllTrousersEntities());
         }
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         modelAndView.setViewName("trousers");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -45,9 +55,16 @@ public class TrousersController {
         } else {
             searchedList = trousersService.searchProducts(name);
         }
-
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -59,16 +76,32 @@ public class TrousersController {
             searchedList.addAll(trousersService.getAllTrousersEntities());
         }
         searchedList = trousersService.filter(searchedList, size, costFrom, costTo,brand,productType);
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
     @PostMapping("/trousers/clear")
     public ModelAndView clearFilters(){
         searchedList.addAll(trousersService.getAllTrousersEntities());
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -77,8 +110,16 @@ public class TrousersController {
         List<Product> productList = new ArrayList<>();
         productList.addAll(trousersService.getAllTrousersEntities());
         trousersService.sortProducts(productList, sortType);
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -87,9 +128,17 @@ public class TrousersController {
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
         trousersService.addToCart(productId, productType);
         ModelAndView modelAndView = new ModelAndView("trousers");
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         List<Product> productList = new ArrayList<>();
         productList.addAll(trousersService.getAllTrousersEntities());
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 }

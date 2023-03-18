@@ -1,22 +1,31 @@
 package com.example.nvclothes.controller;
 
 import com.example.nvclothes.config.TokenProvider;
+import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.ClientEntity;
 import com.example.nvclothes.exception.ClientNotFoundException;
+import com.example.nvclothes.service.CartEntityService;
 import com.example.nvclothes.service.ClientEntityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@Slf4j
 public class RegistrationController {
 
     @Autowired
     private ClientEntityService clientEntityService;
+
+    @Autowired
+    private CartEntityService cartEntityService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -40,8 +49,6 @@ public class RegistrationController {
         }
 
 
-
-
         if (clientEntityService.validateClientEntity(name, lastName, email, password, telephoneNumber, password2)){
             ClientEntity clientEntity = ClientEntity.builder()
                     .name(name)
@@ -51,6 +58,20 @@ public class RegistrationController {
                     .telephoneNumber(telephoneNumber)
                     .build();
             clientEntityService.save(clientEntity);
+            ClientEntity client = ClientEntity.builder().build();
+            try {
+                client= clientEntityService.getClientByEmail(email);
+            } catch (ClientNotFoundException e){
+
+            }
+
+
+            CartEntity cart = CartEntity.builder()
+                    .clientId(client.getId())
+                    .price(0L)
+                    .productAmount(0L)
+                    .build();
+            cartEntityService.save(cart);
         }
         else return registration();
 
@@ -66,10 +87,10 @@ public class RegistrationController {
     public String login(@RequestParam("email") String email, @RequestParam("password") String password, HttpServletRequest request) {
 
         ClientEntity clientEntity;
-        if (clientEntityService.validateCredentials(email, password)){
-            try{
-                 clientEntity = clientEntityService.getClientByEmail(email);
-            } catch (ClientNotFoundException e){
+        if (clientEntityService.validateCredentials(email, password)) {
+            try {
+                clientEntity = clientEntityService.getClientByEmail(email);
+            } catch (ClientNotFoundException e) {
                 return "redirect:/registration";
             }
 
@@ -77,9 +98,17 @@ public class RegistrationController {
             HttpSession session = request.getSession();
             session.setAttribute("token", token);
 
+            log.info("User " + email + " successfully logged in with token " + token);
+
             return "redirect:/all-products";
         } else {
             return "redirect:/registration";
         }
+    }
+
+    @PostMapping("/logout")
+    public String login(HttpServletRequest request) {
+        SecurityContextHolder.getContext().setAuthentication(null);
+        return "redirect:/all-products";
     }
 }

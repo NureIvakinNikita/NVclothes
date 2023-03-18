@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccessoriesEntityRepositoryInterface extends JpaRepository<AccessoriesEntity, Long> {
-    Optional<AccessoriesEntity> getAccessoriesEntitiesById(@Param("id") Long id);
+    List<AccessoriesEntity> getAccessoriesEntitiesByProductId (@Param("accessories_id") Long id);
 
     Optional<AccessoriesEntity> getAccessoriesEntityByBrand(@Param("brand") String brand);
     List<AccessoriesEntity> getAccessoriesEntitiesByBrand(@Param("brand") String brand);

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface TrainersEntityRepositoryInterface extends JpaRepository<TrainersEntity, Long> {
 
-    Optional<TrainersEntity> getTrainersEntitiesById(@Param("id") Long id);
+    List<TrainersEntity> getTrainersEntitiesByProductId(@Param("trainers_id") Long id);
 
     Optional<TrainersEntity> getTrainersEntityByBrand(@Param("brand") String brand);
     List<TrainersEntity> getTrainersEntitiesByBrand(@Param("brand") String brand);

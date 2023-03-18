@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface TShirtEntityRepositoryInterface extends JpaRepository<TShirtEntity, Long> {
-    Optional<TShirtEntity> getTShirtEntitiesById(@Param("id") Long id);
+    List<TShirtEntity> getTShirtEntitiesByProductId(@Param("t_shirt_id") Long id);
 
     Optional<TShirtEntity> getTShirtEntityByBrand(@Param("brand") String brand);
     List<TShirtEntity> getTShirtEntitiesByBrand(@Param("brand") String brand);

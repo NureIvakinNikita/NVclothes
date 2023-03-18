@@ -4,6 +4,8 @@ import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.service.HoodieEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,12 +31,21 @@ public class HoodiesController {
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
         List<Product> productList = new ArrayList<>();
         if (searchedList != null) {
-            Collections.copy(searchedList, productList);
+            productList.addAll(searchedList);
         } else {
             productList.addAll(hoodiesServices.getAllHoodieEntities());
         }
+
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         modelAndView.setViewName("hoodies");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -46,8 +57,17 @@ public class HoodiesController {
             searchedList = hoodiesServices.searchProducts(name);
         }
 
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
+
         ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -58,17 +78,34 @@ public class HoodiesController {
         if (searchedList == null){
             searchedList.addAll(hoodiesServices.getAllHoodieEntities());
         }
+
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         searchedList = hoodiesServices.filter(searchedList, size, costFrom, costTo,brand,productType);
         ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
     @PostMapping("/hoodies/clear")
     public ModelAndView clearFilters(){
         searchedList.addAll(hoodiesServices.getAllHoodieEntities());
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", searchedList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -77,8 +114,16 @@ public class HoodiesController {
         List<Product> productList = new ArrayList<>();
         productList.addAll(hoodiesServices.getAllHoodieEntities());
         hoodiesServices.sortProducts(productList, sortType);
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("hoodies");
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 
@@ -86,10 +131,19 @@ public class HoodiesController {
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
         hoodiesServices.addToCart(productId, productType);
+
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+        }
         ModelAndView modelAndView = new ModelAndView("hoodies");
         List<Product> productList = new ArrayList<>();
         productList.addAll(hoodiesServices.getAllHoodieEntities());
         modelAndView.addObject("productList", productList);
+        modelAndView.addObject("userId", userId);
         return modelAndView;
     }
 }

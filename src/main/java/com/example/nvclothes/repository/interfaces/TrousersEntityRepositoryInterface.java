@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface TrousersEntityRepositoryInterface extends JpaRepository<TrousersEntity, Long> {
-    Optional<TrousersEntity> getTrousersEntitiesById(@Param("id") Long id);
+    List<TrousersEntity> getTrousersEntitiesByProductId(@Param("trousers_id") Long id);
 
     Optional<TrousersEntity> getTrousersEntityByBrand(@Param("brand") String brand);
     List<TrousersEntity> getTrousersEntitiesByBrand(@Param("brand") String brand);

@@ -4,8 +4,11 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.nvclothes.dto.TrainersDto;
+import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.entity.products.TrainersEntity;
+import com.example.nvclothes.exception.AccessoryNotFoundException;
+import com.example.nvclothes.exception.TrainersNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
@@ -53,12 +56,53 @@ public class TrainersEntityService {
 
     }
 
-    public TrainersEntity getTrainersEntityById(Long id){
-        return trainersRepository.getTrainersEntitiesById(id).get();
+    public TrainersEntity getTrainersEntityById(Long id) throws TrainersNotFoundException{
+        List<TrainersEntity> trainers = trainersRepository.getTrainersEntitiesByProductId(id);
+        TrainersEntity trainersEntity = TrainersEntity.builder().build();
+        Long numericValues;
+        if (trainers.size() == 0) {
+            throw new TrainersNotFoundException("Trainers not found for id: " + id);
+        } else {
+            for (TrainersEntity entity : trainers) {
+                switch (entity.getAttribute()) {
+                    case "BRAND":
+                        trainersEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
+                        break;
+                    case "NAME":
+                        trainersEntity.setName(entity.getValue());
+                        break;
+                    case "COST":
+                        numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                        trainersEntity.setCost(numericValues);
+                        break;
+                    case "SIZE":
+                        trainersEntity.setSize(Size.fromDisplayName(entity.getValue()));
+                        break;
+                    case "AMOUNT":
+                        numericValues = Long.parseLong(entity.getValue());
+                        trainersEntity.setAmount(numericValues);
+                        trainersEntity.setId(entity.getId());
+                        trainersEntity.setProductId(entity.getProductId());
+                        trainersEntity.setProductType(ProductType.TRAINERS);
+                        trainersEntity.setPhoto(entity.getPhoto());
+                        return trainersEntity;
+                    default:
+                        break;
+                }
+
+            }
+        }
+        throw new TrainersNotFoundException("Trainers not found for id: " + id);
     }
 
-    public List<TrainersEntity> getTrainersEntitiesByBrand(String brand){
-        return  trainersRepository.getTrainersEntitiesByBrand(brand);
+    public List<TrainersEntity> getTrainersEntitiesByBrand(String brand) throws TrainersNotFoundException{
+        List<TrainersEntity> trainers = new ArrayList<>();
+        trainers.addAll(trainersRepository.getTrainersEntitiesByBrand(brand));
+        if (trainers.size() == 0) {
+            throw new TrainersNotFoundException("Trainers not found for brand: " + brand);
+        }
+
+        return trainers;
     }
 
     public List<TrainersEntity> getAllTrainersEntities(){
@@ -87,7 +131,7 @@ public class TrainersEntityService {
                     numericValues = Long.parseLong(entity.getValue());
                     trainersEntity.setAmount(numericValues);
                     trainersEntity.setId(entity.getId());
-                    trainersEntity.setTrainersId(entity.getTrainersId());
+                    trainersEntity.setProductId(entity.getProductId());
                     trainersEntity.setProductType(ProductType.TRAINERS);
                     trainersEntity.setPhoto(entity.getPhoto());
                     entities.add(trainersEntity);
@@ -126,12 +170,25 @@ public class TrainersEntityService {
             else {
                 sizeE ="";
             }
+            if (costFrom.equals("")) costFrom="0";
+            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
+            try {
+                costF = Long.parseLong(costFrom);
+                costT = Long.parseLong(costTo);
+            } catch (Exception e){
+                costFrom="0";
+                costTo="0";
+                costF = 0L;
+                costT = 0L;
+            }
             costF = Long.parseLong(costFrom);
             costT = Long.parseLong(costTo);
+            if (costF < 0) costF = 0L;
+            if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
             if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
                     (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
                     (productTypeE.equals(productType) || productType.equals("All")))){
                 iterator.remove();
@@ -191,7 +248,7 @@ public class TrainersEntityService {
         Cloudinary cloudinary = new Cloudinary(config);
         List<TrainersEntity> list = new ArrayList<>();
         list.addAll(getAllTrainersEntities());
-        Long trainersId = list.get(list.size()).getTrainersId();
+        Long trainersId = list.get(list.size()).getProductId();
         try {
             cloudinary.uploader().upload(hoodiePhoto, ObjectUtils.asMap("public_id", "trainers_"+trainersId));
         } catch (IOException exception) {

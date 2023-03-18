@@ -74,3 +74,9 @@ databaseChangeLog:
   - include:
       file: 025-added-photos-to-products.sql
       relativeToChangelogFile: true
+  - include:
+      file: 026-create-table-cart-product.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 027-added-two-carts-for-alredy-existing-users.sql
+      relativeToChangelogFile: true

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface HoodieEntityRepositoryInterface extends JpaRepository<HoodieEntity, Long> {
 
-    Optional<HoodieEntity> getHoodieEntitiesById(@Param("id") Long id);
+    List<HoodieEntity> getHoodieEntitiesByHoodieId(@Param("id") Long id);
 
     Optional<HoodieEntity> getHoodieEntityByBrand(@Param("brand") String brand);
     List<HoodieEntity> getHoodieEntitiesByBrand(@Param("brand") String brand);

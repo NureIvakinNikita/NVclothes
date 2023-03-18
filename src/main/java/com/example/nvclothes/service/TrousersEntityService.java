@@ -7,6 +7,8 @@ import com.example.nvclothes.dto.TrousersDto;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.entity.products.TrainersEntity;
 import com.example.nvclothes.entity.products.TrousersEntity;
+import com.example.nvclothes.exception.TrainersNotFoundException;
+import com.example.nvclothes.exception.TrousersNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
@@ -54,12 +56,53 @@ public class TrousersEntityService {
 
     }
 
-    public TrousersEntity getTrousersEntityById(Long id){
-        return trousersRepository.getTrousersEntitiesById(id).get();
+    public TrousersEntity getTrousersEntityById(Long id) throws TrousersNotFoundException{
+        List<TrousersEntity> trousers = trousersRepository.getTrousersEntitiesByProductId(id);
+        TrousersEntity trousersEntity = TrousersEntity.builder().build();
+        Long numericValues;
+        if (trousers.size() == 0) {
+            throw new TrousersNotFoundException("Trousers not found for id: " + id);
+        } else {
+            for (TrousersEntity entity : trousers) {
+                switch (entity.getAttribute()) {
+                    case "BRAND":
+                        trousersEntity.setBrand(Brand.fromDisplayName(entity.getValue()));
+                        break;
+                    case "NAME":
+                        trousersEntity.setName(entity.getValue());
+                        break;
+                    case "COST":
+                        numericValues = Long.parseLong(entity.getValue().split("£")[0]);
+                        trousersEntity.setCost(numericValues);
+                        break;
+                    case "SIZE":
+                        trousersEntity.setSize(Size.fromDisplayName(entity.getValue()));
+                        break;
+                    case "AMOUNT":
+                        numericValues = Long.parseLong(entity.getValue());
+                        trousersEntity.setAmount(numericValues);
+                        trousersEntity.setId(entity.getId());
+                        trousersEntity.setProductId(entity.getProductId());
+                        trousersEntity.setProductType(ProductType.TROUSERS);
+                        trousersEntity.setPhoto(entity.getPhoto());
+                        return trousersEntity;
+                    default:
+                        break;
+                }
+
+            }
+        }
+        throw new TrousersNotFoundException("Trousers not found for id: " + id);
     }
 
-    public List<TrousersEntity> getTrousersEntitiesByBrand(String brand){
-        return  trousersRepository.getTrousersEntitiesByBrand(brand);
+    public List<TrousersEntity> getTrousersEntitiesByBrand(String brand) throws TrousersNotFoundException{
+        List<TrousersEntity> trousers = new ArrayList<>();
+        trousers.addAll(trousersRepository.getTrousersEntitiesByBrand(brand));
+        if (trousers.size() == 0) {
+            throw new TrousersNotFoundException("Trousers not found for brand: " + brand);
+        }
+
+        return trousers;
     }
 
     public List<TrousersEntity> getAllTrousersEntities(){
@@ -88,7 +131,7 @@ public class TrousersEntityService {
                     numericValues = Long.parseLong(entity.getValue());
                     trousersEntity.setAmount(numericValues);
                     trousersEntity.setId(entity.getId());
-                    trousersEntity.setTrousersId(entity.getTrousersId());
+                    trousersEntity.setProductId(entity.getProductId());
                     trousersEntity.setProductType(ProductType.TROUSERS);
                     trousersEntity.setPhoto(entity.getPhoto());
                     entities.add(trousersEntity);
@@ -127,12 +170,25 @@ public class TrousersEntityService {
             else {
                 sizeE ="";
             }
+            if (costFrom.equals("")) costFrom="0";
+            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
+            try {
+                costF = Long.parseLong(costFrom);
+                costT = Long.parseLong(costTo);
+            } catch (Exception e){
+                costFrom="0";
+                costTo="0";
+                costF = 0L;
+                costT = 0L;
+            }
             costF = Long.parseLong(costFrom);
             costT = Long.parseLong(costTo);
+            if (costF < 0) costF = 0L;
+            if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
             if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
                     (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
                     (productTypeE.equals(productType) || productType.equals("All")))){
                 iterator.remove();
@@ -192,7 +248,7 @@ public class TrousersEntityService {
         Cloudinary cloudinary = new Cloudinary(config);
         List<TrousersEntity> list = new ArrayList<>();
         list.addAll(getAllTrousersEntities());
-        Long trousersId = list.get(list.size()).getTrousersId();
+        Long trousersId = list.get(list.size()).getProductId();
         try {
             cloudinary.uploader().upload(hoodiePhoto, ObjectUtils.asMap("public_id", "trousers_"+trousersId));
         } catch (IOException exception) {

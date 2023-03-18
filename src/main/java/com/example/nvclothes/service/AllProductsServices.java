@@ -1,13 +1,15 @@
 package com.example.nvclothes.service;
 
+import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.products.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class AllProductsServices {
 
     @Autowired
@@ -24,6 +26,12 @@ public class AllProductsServices {
 
     @Autowired
     private TShirtEntityService tShirtEntityService;
+
+    @Autowired
+    private CartEntityService cartEntityService;
+
+    @Autowired
+    private CartProductEntityService cartProductEntityService;
 
     public List<Product> getAllProducts(){
         List<Product> list = new ArrayList<>();
@@ -63,11 +71,24 @@ public class AllProductsServices {
                 sizeE ="";
             }
             costP = product.getCost();
+            if (costFrom.equals("")) costFrom="0";
+            if (costTo.equals("")) costTo="0";
+            try {
+                costF = Long.parseLong(costFrom);
+                costT = Long.parseLong(costTo);
+            } catch (Exception e){
+                costFrom="0";
+                costTo="0";
+                costF = 0L;
+                costT = 0L;
+            }
             costF = Long.parseLong(costFrom);
             costT = Long.parseLong(costTo);
+            if (costF < 0) costF = 0L;
+            if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
             if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
                     (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
                     (productTypeE.equals(productType) || productType.equals("All")))){
                 iterator.remove();
@@ -115,8 +136,71 @@ public class AllProductsServices {
         return productList;
     }
 
-    public void addToCart(Long productId, String productType){
-        List<Product> productList = new ArrayList<>();
+    public void addToCart(Long productId, String productType, Long clientId){
+
+        switch (productType) {
+            case "HOODIE":
+                try {
+                    HoodieEntity hoodie = hoodieEntityService.getHoodieEntityById(productId);
+                    CartEntity cart = cartEntityService.getCartEntityByClientId(clientId);
+                    cart.setPrice(cart.getPrice()+hoodie.getCost());
+                    cart.setProductAmount(cart.getProductAmount()+1);
+                    cartEntityService.save(cart);
+                    cartProductEntityService.addProductToCart(hoodie.getProductId(), cart.getId(), hoodie.getProductType().toString());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "ACCESSORY":
+                try {
+                    AccessoriesEntity accessory = accessoriesEntityService.getAccessoryEntityById(productId);
+                    CartEntity cart = cartEntityService.getCartEntityByClientId(clientId);
+                    cart.setPrice(cart.getPrice()+accessory.getCost());
+                    cart.setProductAmount(cart.getProductAmount()+1);
+                    cartEntityService.save(cart);
+                    cartProductEntityService.addProductToCart(accessory.getProductId(), cart.getId(), accessory.getProductType().toString());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TRAINERS":
+                try {
+                    TrainersEntity trainers = trainersEntityService.getTrainersEntityById(productId);
+                    CartEntity cart = cartEntityService.getCartEntityByClientId(clientId);
+                    cart.setPrice(cart.getPrice()+trainers.getCost());
+                    cart.setProductAmount(cart.getProductAmount()+1);
+                    cartEntityService.save(cart);
+                    cartProductEntityService.addProductToCart(trainers.getProductId(), cart.getId(), trainers.getProductType().toString());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TROUSERS":
+                try {
+                    TrousersEntity trousers = trousersEntityService.getTrousersEntityById(productId);
+                    CartEntity cart = cartEntityService.getCartEntityByClientId(clientId);
+                    cart.setPrice(cart.getPrice()+trousers.getCost());
+                    cart.setProductAmount(cart.getProductAmount()+1);
+                    cartEntityService.save(cart);
+                    cartProductEntityService.addProductToCart(trousers.getProductId(), cart.getId(), trousers.getProductType().toString());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TSHIRT":
+                try {
+                    TShirtEntity tShirt = tShirtEntityService.getTShirtEntityById(productId);
+                    CartEntity cart = cartEntityService.getCartEntityByClientId(clientId);
+                    cart.setPrice(cart.getPrice()+tShirt.getCost());
+                    cart.setProductAmount(cart.getProductAmount()+1);
+                    cartEntityService.save(cart);
+                    cartProductEntityService.addProductToCart(tShirt.getProductId(), cart.getId(), tShirt.getProductType().toString());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+        }
+        /*List<Product> productList = new ArrayList<>();
         productList.addAll(this.getAllProducts());
         for (Product product : productList){
             switch (product.getProductType()){
@@ -150,7 +234,7 @@ public class AllProductsServices {
                     break;
                 case ACCESSORY:
                     AccessoriesEntity accessoriesEntity = (AccessoriesEntity) product;
-                    if (accessoriesEntity.getAccessoriesId() == productId){
+                    if (accessoriesEntity.getProductId() == productId){
 
                         return;
                     }
@@ -158,8 +242,6 @@ public class AllProductsServices {
                 default:
                     break;
             }
-        }
+        }*/
     }
-
-
 }
