@@ -199,6 +199,8 @@ public class AllProductsServices {
                     log.info(e.toString());
                 }
                 break;
+            default:
+                break;
         }
         /*List<Product> productList = new ArrayList<>();
         productList.addAll(this.getAllProducts());

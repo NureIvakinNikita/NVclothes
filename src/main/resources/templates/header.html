@@ -5,52 +5,52 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
 
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"  style="color: white;text-decoration: none;">NV Clothes</a>
+      <a class="navbar-brand " href="/all-products" >NV Clothes</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarColor02">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/all-products"  >All products</a>
+            <a class="nav-link " href="/all-products"  >All products</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/t-shirts"  >T-Shirts</a>
+            <a class="nav-link " href="/t-shirts"  >T-Shirts</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/trousers"  >Trousers</a>
+            <a class="nav-link " href="/trousers"  >Trousers</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item ">
             <a class="nav-link" href="/hoodies"  >Hoodies</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item ">
             <a class="nav-link" href="/accessories"  >Accessories</a>
           </li>
         </ul>
-        <form class="d-flex" th:action="@{/all-products/search}" method="post">
-          <input class="form-control me-sm-2" style="font-family: 'Itim', cursive;" type="text" placeholder="Search" name="search">
-          <button class="btn btn-secondary my-2 my-sm-0" type="submit" style="font-family: 'Itim', cursive;">Search</button>
+        <form class="d-flex " th:action="@{/all-products/search}" method="post">
+          <input class="form-control me-sm-2 " style="font-family: 'Itim', cursive;" type="text" placeholder="Search" name="search">
+          <button class="btn btn-secondary my-2 my-sm-0 " type="submit" style="font-family: 'Itim', cursive;">Search</button>
         </form>
 
         <div class="d-flex">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#cart"><i class="bi bi-basket"></i></a>
+              <a class="nav-link" href="/user/cart"><i class="bi bi-basket"></i></a>
             </li>
-            <li class="nav-item" >
-              <a class="nav-link" href="/logout"  th:if="${userId != null}">
-                <i class="bi bi-person-square"></i>
-                Log out
-              </a>
+            <li class="nav-item" th:if="${userId != null}">
+              <form class="d-flex" th:action="@{/log-out}" method="post">
+<!--                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+                <button class="btn btn-secondary my-2 my-sm-0 " type="submit" style="font-family: 'Itim', cursive;"><i class="bi bi-x-square-fill"></i>Log out</button>
+              </form>
             </li>
             <li class="nav-item" th:if="${userId == null}">
-              <a class="nav-link" href="/login">
+              <a class="nav-link " href="/login">
                 <i class="bi bi-person-square"></i>
                 Log in
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/registration">
+              <a class="nav-link " href="/registration">
                 <i class="bi bi-plus-square"></i>
                 Register
               </a>

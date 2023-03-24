@@ -145,12 +145,12 @@ public class AllProductsController {
         return modelAndView;
     }
 
-    @PostMapping("/all-products/add-to-cart")
+    /*@PostMapping("/all-products/add-to-cart")
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView addToCart(@RequestParam("productId") Long productId,
                                   @RequestParam("productType") String productType, HttpServletRequest request){
-        /*HttpSession session = request.getSession();
-        String token = (String) session.getAttribute("token");*/
+        *//*HttpSession session = request.getSession();
+        String token = (String) session.getAttribute("token");*//*
 
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -163,6 +163,6 @@ public class AllProductsController {
 
         return modelAndView;
 
-    }
+    }*/
 
 }

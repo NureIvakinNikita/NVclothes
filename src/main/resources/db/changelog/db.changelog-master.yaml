@@ -80,3 +80,42 @@ databaseChangeLog:
   - include:
       file: 027-added-two-carts-for-alredy-existing-users.sql
       relativeToChangelogFile: true
+  - include:
+      file: 028-added-cart.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 029-added-values-to-cart-id-in-client-table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 030-added-client-id-to-orders.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 031-alte-table-orders-added-foreing-key.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 032-rename-column-in-receipt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 033-remove-column-productType-from-order.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 034-delete-colum-product-type-from-orders.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 035-add-colum-recipient-to-receipt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 036-add-colum-order-id-to-receipt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 037-added-foreign-key-constraint-order-id.-to-receipt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 038-clear-receipt-and-order-product-table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 039-clear-order-and-order-product-and-receipt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 040-return-constraint.sql
+      relativeToChangelogFile: true

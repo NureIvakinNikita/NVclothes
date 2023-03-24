@@ -2,13 +2,20 @@ package com.example.nvclothes.entity;
 
 import com.example.nvclothes.entity.products.*;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "order_product")
+@Data
+@Table(name = "order_product", schema = "project")
 @Access(AccessType.FIELD)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OrderProductEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "my_seq")
+    @SequenceGenerator(name = "my_seq", sequenceName = "MY_SEQ", allocationSize = 1)
     @Column(name = "order_product_id")
     private Long orderProductId;
 

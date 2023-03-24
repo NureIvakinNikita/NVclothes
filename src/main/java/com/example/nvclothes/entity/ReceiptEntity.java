@@ -1,7 +1,10 @@
 package com.example.nvclothes.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Set;
@@ -10,6 +13,9 @@ import java.util.Set;
 @Data
 @Table(name = "receipt", schema = "project")
 @Access(AccessType.FIELD)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReceiptEntity {
 
     @Id
@@ -29,8 +35,14 @@ public class ReceiptEntity {
     @Column
     private String address;
 
+    @Column
+    private String recipient;
 
-    //private String client;
+    @Column
+    private Long orderId;
+
+    @Column
+    private Long orderGroupId;
 
     @OneToMany(mappedBy = "receipt")
     private Set<OrderEntity> order;

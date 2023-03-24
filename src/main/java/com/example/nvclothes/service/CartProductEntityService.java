@@ -18,12 +18,24 @@ public class CartProductEntityService {
         return cartProductEntities;
     }
 
+    public void removeProduct(String productType, Long productId){
+        cartProductEntityRepository.deleteCartProductEntityByProductIdAndProductType(productId, productType);
+    }
+
+    public void deleteCartProductEntity(Long cartProductEntityId){
+        cartProductEntityRepository.deleteCartProductEntityByCartProductId(cartProductEntityId);
+    }
+
     public void addProductToCart(Long productId, Long cartId, String productType){
         CartProductEntity cartProductEntity = CartProductEntity.builder()
                 .productId(productId)
                 .cartId(cartId)
                 .productType(productType).build();
         cartProductEntityRepository.save(cartProductEntity);
+    }
+
+    public void deleteAllByCartId(Long cartId){
+        cartProductEntityRepository.deleteAllByCartId(cartId);
     }
 
 }

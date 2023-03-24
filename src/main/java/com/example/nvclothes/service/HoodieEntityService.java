@@ -56,7 +56,7 @@ public class HoodieEntityService {
     }
 
     public HoodieEntity getHoodieEntityById(Long id) throws HoodieNotFoundException{
-        List<HoodieEntity> hoodie = hoodieRepository.getHoodieEntitiesByHoodieId(id);
+        List<HoodieEntity> hoodie = hoodieRepository.getHoodieEntitiesByProductId(id);
         HoodieEntity hoodieEntity = HoodieEntity.builder().build();
         Long numericValues;
         if (hoodie.size() == 0) {

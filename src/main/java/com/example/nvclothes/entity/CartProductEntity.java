@@ -2,10 +2,7 @@ package com.example.nvclothes.entity;
 
 import com.example.nvclothes.entity.products.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "cart_product")
@@ -13,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class CartProductEntity {
 
     @Id

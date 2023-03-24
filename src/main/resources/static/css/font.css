@@ -25,6 +25,12 @@ body{
     color: black;
     text-decoration: none;
 }
+.headerFont{
+    font-family: 'Itim', cursive;
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+}
 
 #link{
     font-family: 'Itim', cursive;
@@ -35,4 +41,8 @@ body{
 .container-fluid a {
     font-family: 'Itim', cursive;
     color: white;
+}
+
+.default{
+
 }

@@ -35,4 +35,11 @@ public class CartEntity {
     @OneToMany(mappedBy = "cart")
     private List<CartProductEntity> products;
 
+    @Override
+    public String toString() {
+        return "CartEntity{" +
+                "id=" + id +
+                '}';
+    }
+
 }

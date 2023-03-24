@@ -106,9 +106,13 @@ public class RegistrationController {
         }
     }
 
-    @PostMapping("/logout")
-    public String login(HttpServletRequest request) {
-        SecurityContextHolder.getContext().setAuthentication(null);
+    @PostMapping("/log-out")
+    public String logout(HttpServletRequest request) {
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+        //SecurityContextHolder.setContext(null);
+        HttpSession session = request.getSession();
+        session.removeAttribute("token");
+        authentication =SecurityContextHolder.getContext().getAuthentication();
         return "redirect:/all-products";
     }
 }

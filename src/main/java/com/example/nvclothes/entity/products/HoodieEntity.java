@@ -26,7 +26,7 @@ public class HoodieEntity extends Product{
     @Column
     private Long id;
 
-    @Column(name = "hoodie_id")
+    @Column
     private Long productId;
 
     @Column

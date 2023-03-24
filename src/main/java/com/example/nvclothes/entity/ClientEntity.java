@@ -73,6 +73,15 @@ public class ClientEntity{
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> role = new HashSet<>();*/
 
+    @Override
+    public String toString() {
+        return "ClientEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
 
 
 }

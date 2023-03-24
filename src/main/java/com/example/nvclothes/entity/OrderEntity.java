@@ -3,7 +3,10 @@ package com.example.nvclothes.entity;
 import com.example.nvclothes.entity.products.*;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +15,9 @@ import java.util.List;
 @Data
 @Table(name = "orders", schema = "project")
 @Access(AccessType.FIELD)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OrderEntity {
 
     @Id
@@ -26,10 +32,13 @@ public class OrderEntity {
     private Date registrationDate;
 
     @Column
-    private String productType;
+    private String address;
 
     @Column
-    private String address;
+    private Long clientId;
+
+//    @Column
+//    private Long receiptId;
 
 
     @OneToMany(mappedBy = "order")

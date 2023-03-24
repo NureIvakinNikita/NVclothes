@@ -31,3 +31,20 @@ p, input {
     margin: 0 auto;
     text-align: center;
 }
+
+.table-border {
+    border: 1px solid;
+    border-collapse: collapse;
+    color: #E99787;
+}
+
+.table-border th,
+.table-border td {
+    border: 1px solid;
+    padding: 10px;
+    color: #E99787;
+}
+
+body{
+    background-color: #f4ebdb;
+}
