@@ -1,6 +1,9 @@
 package com.example.nvclothes;
 
 import com.cloudinary.utils.ObjectUtils;
+import com.example.nvclothes.entity.products.AccessoriesEntity;
+import com.example.nvclothes.repository.interfaces.AccessoriesEntityRepositoryInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,12 +14,22 @@ import com.cloudinary.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @SpringBootApplication
 public class NvClothesApplication {
 
+	@Autowired
+	private static AccessoriesEntityRepositoryInterface accessoriesRepository;
 	public static void main(String[] args) {
 		SpringApplication.run(NvClothesApplication.class, args);
+
+		Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(1L, "BRAND");
+		optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(1L, "NAME");
+		AccessoriesEntity entity = optionalEntity.get();
+		entity.setAttribute("BRAND");
+		entity.setValue("Faded Future");
+		accessoriesRepository.save(entity);
 		/*Map config = new HashMap();
 		String cloudName, api_key, api_secret;
 		cloudName = System.getenv("CLOUD_NAME");

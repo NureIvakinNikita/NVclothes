@@ -2,16 +2,11 @@ package com.example.nvclothes.controller;
 
 import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.OrderEntity;
-import com.example.nvclothes.entity.OrderProductEntity;
-import com.example.nvclothes.entity.ReceiptEntity;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.exception.CartNotFoundException;
-import com.example.nvclothes.service.CartEntityService;
-import com.example.nvclothes.service.CartProductEntityService;
-import com.example.nvclothes.service.OrderEntityService;
+import com.example.nvclothes.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -39,23 +33,38 @@ public class CartController {
     @Autowired
     private OrderEntityService orderEntityService;
 
-    private HashMap<Long, Long> productsAmount;
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
+    private ClientEntityService clientEntityService;
+
+    private HashMap<String, Long> productsAmount;
 
     @GetMapping("/user/cart")
     @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public ModelAndView cart(){
         List<Product> productList = new ArrayList<>();
-        
+
         Long userId;
+        String role;
+
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
             RedirectView redirectView = new RedirectView("/all-products");
             ModelAndView modelAndView = new ModelAndView(redirectView);
             return modelAndView;
         }
+
         CartEntity cart = CartEntity.builder().build();
         try{
             cart = cartEntityService.getCartEntityByClientId(userId);
@@ -69,11 +78,11 @@ public class CartController {
         Product product;
         while (iterator.hasNext()){
             product = iterator.next();
-            if (productsAmount.containsKey(product.getProductId())){
-                productsAmount.put(product.getProductId(),productsAmount.get(product.getProductId()) + 1L);
+            if (productsAmount.containsKey(product.getProductId()+""+product.getProductType())){
+                productsAmount.put(product.getProductId()+""+product.getProductType(),productsAmount.get(product.getProductId()) + 1L);
                 iterator.remove();
             } else {
-                productsAmount.put(product.getProductId(),1L);
+                productsAmount.put(product.getProductId()+""+product.getProductType(),1L);
             }
         }
 
@@ -82,6 +91,7 @@ public class CartController {
         modelAndView.addObject("productsAmount", productsAmount);
         modelAndView.addObject("userId", userId);
         modelAndView.addObject("totalCost", cart.getPrice());
+        modelAndView.addObject("role", role);
         return modelAndView;
     }
 
@@ -89,11 +99,19 @@ public class CartController {
     public ModelAndView remove(@RequestParam("productType") String productType,
                                @RequestParam("productId") String productId){
         Long userId;
+        String role;
+
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
             RedirectView redirectView = new RedirectView("/all-products");
             ModelAndView modelAndView = new ModelAndView(redirectView);
             return modelAndView;
@@ -119,16 +137,22 @@ public class CartController {
     }*/
 
     @PostMapping("/all-products/add-to-cart")
-    @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
+    //@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
     public String addToCart(@RequestParam("productId") Long productId,
                                   @RequestParam("productType") String productType, HttpServletRequest request){
         /*HttpSession session = request.getSession();
         String token = (String) session.getAttribute("token");*/
 
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(authentication.getName());
-
+        Long userId;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+        } catch (Exception e){
+            userId = null;
+            /*RedirectView redirectView = new RedirectView("/all-products");
+            ModelAndView modelAndView = new ModelAndView(redirectView);*/
+            return "redirect:/all-products";
+        }
         cartEntityService.addToCart(productId, productType, userId);
 
 
@@ -167,6 +191,8 @@ public class CartController {
         cart.setPrice(0L);
         cart.setProductAmount(0L);
         cartEntityService.save(cart);
+
+
         RedirectView redirectView = new RedirectView("/all-products");
         ModelAndView modelAndView = new ModelAndView(redirectView);
         return modelAndView;

@@ -3,11 +3,11 @@ package com.example.nvclothes.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.dto.TrousersDto;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.entity.products.TrainersEntity;
 import com.example.nvclothes.entity.products.TrousersEntity;
-import com.example.nvclothes.exception.TrainersNotFoundException;
 import com.example.nvclothes.exception.TrousersNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
@@ -27,27 +27,45 @@ public class TrousersEntityService {
 
     private final TrousersEntityRepositoryInterface trousersRepository;
 
-    public void createHoodieEntity(@RequestBody TrousersDto trousersDto) throws Exception{
+    public void createTrousersEntity(@RequestBody TrousersDto trousersDto) throws Exception{
 
         if (trousersDto.getCost() != null && trousersDto.getBrand()!=null
                 && trousersDto.getName()!=null && trousersDto.getAmount()!=null){
             TrousersEntity trousersEntity = TrousersEntity.builder()
-                    .attribute(Attribute.BRAND.getDisplayName()).value(trousersDto.getBrand()).build();
+                    .attribute(Attribute.BRAND.getDisplayName()).value(trousersDto.getBrand())
+                    .photo(trousersDto.getPhoto())
+                    .productId(trousersDto.getTrousersId())
+                    .id(trousersDto.getId()).build();
+
+            trousersRepository.save(trousersEntity);
+
+            trousersEntity = TrousersEntity.builder()
+                    .productId(trousersDto.getTrousersId()).build();
             trousersEntity.setAttribute(Attribute.NAME.getDisplayName());
             trousersEntity.setValue(trousersDto.getName());
-            trousersEntity.setPhoto(addPhotoToTrousers(trousersDto.getPhoto()));
+            trousersEntity.setPhoto(trousersDto.getPhoto());
             trousersRepository.save(trousersEntity);
+
+            trousersEntity = TrousersEntity.builder()
+                    .productId(trousersDto.getTrousersId()).build();
+
             trousersEntity.setAttribute(Attribute.COST.getDisplayName());
             trousersEntity.setValue(trousersDto.getCost().toString());
-            trousersEntity.setPhoto(addPhotoToTrousers(trousersDto.getPhoto()));
+            trousersEntity.setPhoto(trousersDto.getPhoto());
             trousersRepository.save(trousersEntity);
+
+            trousersEntity = TrousersEntity.builder()
+                    .productId(trousersDto.getTrousersId()).build();
             trousersEntity.setAttribute(Attribute.SIZE.getDisplayName());
-            trousersEntity.setValue(trousersDto.getSize().toString());
-            trousersEntity.setPhoto(addPhotoToTrousers(trousersDto.getPhoto()));
+            trousersEntity.setValue(trousersDto.getSize().getDisplayName());
+            trousersEntity.setPhoto(trousersDto.getPhoto());
             trousersRepository.save(trousersEntity);
+
+            trousersEntity = TrousersEntity.builder()
+                    .productId(trousersDto.getTrousersId()).build();
             trousersEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             trousersEntity.setValue(trousersDto.getAmount().toString());
-            trousersEntity.setPhoto(addPhotoToTrousers(trousersDto.getPhoto()));
+            trousersEntity.setPhoto(trousersDto.getPhoto());
             trousersRepository.save(trousersEntity);
         }
         else {
@@ -59,6 +77,8 @@ public class TrousersEntityService {
     public TrousersEntity getTrousersEntityById(Long id) throws TrousersNotFoundException{
         List<TrousersEntity> trousers = trousersRepository.getTrousersEntitiesByProductId(id);
         TrousersEntity trousersEntity = TrousersEntity.builder().build();
+        Comparator<TrousersEntity> byId = Comparator.comparing(TrousersEntity::getId);
+        Collections.sort(trousers, byId);
         Long numericValues;
         if (trousers.size() == 0) {
             throw new TrousersNotFoundException("Trousers not found for id: " + id);
@@ -157,9 +177,13 @@ public class TrousersEntityService {
         return entities;
     }
 
-    public List<Product> filter(List<Product> searchedList, String size,
-                                String costFrom, String costTo, String brand, String productType){
-        ListIterator<Product> iterator = searchedList.listIterator();
+    public List<Product> filter(List<Product> searchedList, FilterObject filterObject/*String size,
+                                String costFrom, String costTo, String brand, String productType*/){
+        /*= searchedList.listIterator();*/
+        List<Product> allProducts = new ArrayList<>();
+        allProducts.addAll(this.getAllTrousersEntities());
+        searchedList =  new ArrayList<>();
+        ListIterator<Product> iterator = allProducts.listIterator();
         String sizeE, productTypeE;
         Long costF, costT, costP;
         while (iterator.hasNext()){
@@ -169,29 +193,22 @@ public class TrousersEntityService {
             }
             else {
                 sizeE ="";
+                filterObject.setSize("All");
             }
-            if (costFrom.equals("")) costFrom="0";
-            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
-            try {
-                costF = Long.parseLong(costFrom);
-                costT = Long.parseLong(costTo);
-            } catch (Exception e){
-                costFrom="0";
-                costTo="0";
-                costF = 0L;
-                costT = 0L;
-            }
-            costF = Long.parseLong(costFrom);
-            costT = Long.parseLong(costTo);
+
+            costF = filterObject.getCostFrom();
+            costT = filterObject.getCostTo();
             if (costF < 0) costF = 0L;
             if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
-            if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
-                    (productTypeE.equals(productType) || productType.equals("All")))){
-                iterator.remove();
+            if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
+                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                searchedList.add(product);
+            } else if (searchedList.contains(product)) {
+                searchedList.remove(product);
             }
         }
         return searchedList;
@@ -259,8 +276,63 @@ public class TrousersEntityService {
         return url;
     }
 
+    public void save(TrousersEntity trousers){
+
+        Optional<TrousersEntity> optionalEntity = trousersRepository.getTrousersEntityByProductIdAndAttribute(trousers.getProductId(), "BRAND");
+        if (optionalEntity.isPresent()) {
+            TrousersEntity entity = optionalEntity.get();
+            entity.setAttribute("BRAND");
+            entity.setValue(trousers.getBrand().getDisplayName());
+            entity.setProductId(trousers.getProductId());
+            entity.setPhoto(trousers.getPhoto());
+            trousersRepository.save(entity);
+        }
+
+
+        optionalEntity = trousersRepository.getTrousersEntityByProductIdAndAttribute(trousers.getProductId(), "NAME");
+        if (optionalEntity.isPresent()) {
+            TrousersEntity entity = optionalEntity.get();
+            entity.setAttribute("NAME");
+            entity.setValue(trousers.getName());
+            entity.setProductId(trousers.getProductId());
+            trousersRepository.save(entity);
+        }
+
+
+        optionalEntity = trousersRepository.getTrousersEntityByProductIdAndAttribute(trousers.getProductId(), "COST");
+        if (optionalEntity.isPresent()) {
+            TrousersEntity entity = optionalEntity.get();
+            entity.setAttribute("COST");
+            entity.setValue(trousers.getCost().toString());
+            entity.setProductId(trousers.getProductId());
+            trousersRepository.save(entity);
+        }
+
+        optionalEntity = trousersRepository.getTrousersEntityByProductIdAndAttribute(trousers.getProductId(), "SIZE");
+        if (optionalEntity.isPresent()) {
+            TrousersEntity entity = optionalEntity.get();
+            entity.setAttribute("SIZE");
+            entity.setValue(trousers.getSize().getDisplayName());
+            entity.setProductId(trousers.getProductId());
+            trousersRepository.save(entity);
+        }
+
+        optionalEntity = trousersRepository.getTrousersEntityByProductIdAndAttribute(trousers.getProductId(), "AMOUNT");
+        if (optionalEntity.isPresent()) {
+            TrousersEntity entity = optionalEntity.get();
+            entity.setAttribute("AMOUNT");
+            entity.setValue(trousers.getAmount().toString());
+            entity.setProductId(trousers.getProductId());
+            trousersRepository.save(entity);
+        }
+
+    }
     public void addToCart(Long productId, String productType){
 
+    }
+
+    public void deleteTrousersEntitiesByProductId(Long productId){
+        trousersRepository.deleteTrousersEntitiesByProductId(productId);
     }
 
     public void deleteTrousersEntityById(Long id){

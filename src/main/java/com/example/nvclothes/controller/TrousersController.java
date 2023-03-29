@@ -1,5 +1,6 @@
 package com.example.nvclothes.controller;
 
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.service.TrousersEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class TrousersController {
 
     private List<Product> searchedList = null;
 
+    @Autowired
+    private FilterObject filterObject;
+
     @GetMapping("/trousers")
     public ModelAndView/*ResponseEntity<String>*/ getAllProducts(ModelAndView modelAndView){
         List<Product> productList = new ArrayList<>();
@@ -36,15 +40,24 @@ public class TrousersController {
             productList.addAll(trousersService.getAllTrousersEntities());
         }
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
         modelAndView.setViewName("trousers");
         modelAndView.addObject("productList", productList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 
@@ -56,52 +69,92 @@ public class TrousersController {
             searchedList = trousersService.searchProducts(name);
         }
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 
     @PostMapping("/trousers/filtered")
-    public ModelAndView filterProducts(@RequestParam("productType") String productType, @RequestParam("costFrom") String costFrom,
+    public ModelAndView filterProducts( @RequestParam("costFrom") String costFrom,
                                        @RequestParam("costTo") String costTo,
                                        @RequestParam("size") String size, @RequestParam("brand") String brand){
         if (searchedList == null){
+            searchedList = new ArrayList<>();
             searchedList.addAll(trousersService.getAllTrousersEntities());
         }
-        searchedList = trousersService.filter(searchedList, size, costFrom, costTo,brand,productType);
+
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
+        Long cF = 0L, cT = 0L;
+        if (!costFrom.equals("")) cF = Long.parseLong(costFrom);
+        if (!costTo.equals("")) cT = Long.parseLong(costTo);
+        filterObject = FilterObject.builder()
+                .size(size)
+                .costFrom(cF)
+                .costTo(cT)
+                .brand(brand)
+                .productType("All").build();
+        searchedList = trousersService.filter(searchedList,filterObject);
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 
     @PostMapping("/trousers/clear")
     public ModelAndView clearFilters(){
+        searchedList = new ArrayList<>();
         searchedList.addAll(trousersService.getAllTrousersEntities());
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
+        filterObject = FilterObject.builder().build();
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", searchedList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 
@@ -111,15 +164,24 @@ public class TrousersController {
         productList.addAll(trousersService.getAllTrousersEntities());
         trousersService.sortProducts(productList, sortType);
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
         ModelAndView modelAndView = new ModelAndView("trousers");
         modelAndView.addObject("productList", productList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 
@@ -129,16 +191,25 @@ public class TrousersController {
         trousersService.addToCart(productId, productType);
         ModelAndView modelAndView = new ModelAndView("trousers");
         Long userId;
+        String role;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
         } catch (Exception e){
             userId = null;
+            role = "null";
         }
         List<Product> productList = new ArrayList<>();
         productList.addAll(trousersService.getAllTrousersEntities());
         modelAndView.addObject("productList", productList);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("filter", filterObject);
         return modelAndView;
     }
 }

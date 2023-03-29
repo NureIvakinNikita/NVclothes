@@ -1,5 +1,6 @@
 package com.example.nvclothes.service;
 
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.products.*;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +58,12 @@ public class AllProductsServices {
         return entities;
     }
 
-    public List<Product> filter(List<Product> searchedList, String size,
-                                String costFrom, String costTo, String brand, String productType){
-        ListIterator<Product> iterator = searchedList.listIterator();
+    public List<Product> filter(List<Product> searchedList, FilterObject filterObject/*String size,
+                                String costFrom, String costTo, String brand, String productType*/){
+         /*= searchedList.listIterator();*/
+        List<Product> allProducts = this.getAllProducts();
+        searchedList =  new ArrayList<>();
+        ListIterator<Product> iterator = allProducts.listIterator();
         String sizeE, productTypeE;
         Long costF, costT, costP;
         while (iterator.hasNext()){
@@ -69,10 +73,11 @@ public class AllProductsServices {
             }
             else {
                 sizeE ="";
+                filterObject.setSize("All");
             }
             costP = product.getCost();
-            if (costFrom.equals("")) costFrom="0";
-            if (costTo.equals("")) costTo="0";
+            /*if (filterObject.getCostFrom().equals("")) filterObject.setCostFrom("0");
+            if (filterObject.getCostTo().equals("")) filterObject.setCostTo("0");
             try {
                 costF = Long.parseLong(costFrom);
                 costT = Long.parseLong(costTo);
@@ -81,17 +86,20 @@ public class AllProductsServices {
                 costTo="0";
                 costF = 0L;
                 costT = 0L;
-            }
-            costF = Long.parseLong(costFrom);
-            costT = Long.parseLong(costTo);
+            }*/
+            costF = filterObject.getCostFrom();//Long.parseLong(costFrom);
+            costT = filterObject.getCostTo();//Long.parseLong(costTo);
             if (costF < 0) costF = 0L;
             if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
-            if (!((sizeE.equals(size) || size.equals("All")) &&
+            if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
                     ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
-                    (productTypeE.equals(productType) || productType.equals("All")))){
-                iterator.remove();
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
+                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                //iterator.remove();
+                searchedList.add(product);
+            } else if (searchedList.contains(product)) {
+                searchedList.remove(product);
             }
         }
         return searchedList;
@@ -245,5 +253,49 @@ public class AllProductsServices {
                     break;
             }
         }*/
+    }
+    public Product getProductByProductIdAndType(Long productId, String productType){
+        Product product = null;
+        switch (productType) {
+            case "HOODIE":
+                try {
+                    product = hoodieEntityService.getHoodieEntityById(productId);
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "ACCESSORY":
+                try {
+                    product = accessoriesEntityService.getAccessoryEntityById(productId);
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TRAINERS":
+                try {
+                    product = trainersEntityService.getTrainersEntityById(productId);
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TROUSERS":
+                try {
+                    product = trousersEntityService.getTrousersEntityById(productId);
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            case "TSHIRT":
+                try {
+                    product = tShirtEntityService.getTShirtEntityById(productId);
+                } catch (Exception e) {
+                    log.info(e.toString());
+                }
+                break;
+            default:
+                break;
+        }
+
+        return product;
     }
 }

@@ -3,11 +3,11 @@ package com.example.nvclothes.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.dto.TrainersDto;
-import com.example.nvclothes.entity.products.AccessoriesEntity;
+import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.entity.products.TrainersEntity;
-import com.example.nvclothes.exception.AccessoryNotFoundException;
 import com.example.nvclothes.exception.TrainersNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
@@ -27,27 +27,43 @@ public class TrainersEntityService {
 
     private final TrainersEntityRepositoryInterface trainersRepository;
 
-    public void createHoodieEntity(@RequestBody TrainersDto trainersDto) throws Exception{
+    public void createTrainersEntity(@RequestBody TrainersDto trainersDto) throws Exception{
+
 
         if (trainersDto.getCost() != null && trainersDto.getBrand()!=null
                 && trainersDto.getName()!=null && trainersDto.getAmount()!=null){
             TrainersEntity trainersEntity = TrainersEntity.builder()
-                    .attribute(Attribute.BRAND.getDisplayName()).value(trainersDto.getBrand()).build();
+                    .attribute(Attribute.BRAND.getDisplayName()).value(trainersDto.getBrand())
+                    .photo(trainersDto.getPhoto())
+                    .productId(trainersDto.getTrainersId())
+                    .id(trainersDto.getId()).build();
+
+            trainersRepository.save(trainersEntity);
+
+            trainersEntity.setId(trainersEntity.getId()+1L);
             trainersEntity.setAttribute(Attribute.NAME.getDisplayName());
             trainersEntity.setValue(trainersDto.getName());
-            trainersEntity.setPhoto(addPhotoToTrainers(trainersDto.getPhoto()));
+            trainersEntity.setPhoto(trainersDto.getPhoto());
             trainersRepository.save(trainersEntity);
+
+
+            trainersEntity.setId(trainersEntity.getId()+1L);
             trainersEntity.setAttribute(Attribute.COST.getDisplayName());
             trainersEntity.setValue(trainersDto.getCost().toString());
-            trainersEntity.setPhoto(addPhotoToTrainers(trainersDto.getPhoto()));
+            trainersEntity.setPhoto(trainersDto.getPhoto());
             trainersRepository.save(trainersEntity);
+
+            trainersEntity.setId(trainersEntity.getId()+1L);
+
             trainersEntity.setAttribute(Attribute.SIZE.getDisplayName());
-            trainersEntity.setValue(trainersDto.getSize().toString());
-            trainersEntity.setPhoto(addPhotoToTrainers(trainersDto.getPhoto()));
+            trainersEntity.setValue(trainersDto.getSize().getDisplayName());
+            trainersEntity.setPhoto(trainersDto.getPhoto());
             trainersRepository.save(trainersEntity);
+
+            trainersEntity.setId(trainersEntity.getId()+1L);
             trainersEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             trainersEntity.setValue(trainersDto.getAmount().toString());
-            trainersEntity.setPhoto(addPhotoToTrainers(trainersDto.getPhoto()));
+            trainersEntity.setPhoto(trainersDto.getPhoto());
             trainersRepository.save(trainersEntity);
         }
         else {
@@ -59,6 +75,8 @@ public class TrainersEntityService {
     public TrainersEntity getTrainersEntityById(Long id) throws TrainersNotFoundException{
         List<TrainersEntity> trainers = trainersRepository.getTrainersEntitiesByProductId(id);
         TrainersEntity trainersEntity = TrainersEntity.builder().build();
+        Comparator<TrainersEntity> byId = Comparator.comparing(TrainersEntity::getId);
+        Collections.sort(trainers, byId);
         Long numericValues;
         if (trainers.size() == 0) {
             throw new TrainersNotFoundException("Trainers not found for id: " + id);
@@ -157,9 +175,13 @@ public class TrainersEntityService {
         return entities;
     }
 
-    public List<Product> filter(List<Product> searchedList, String size,
-                                String costFrom, String costTo, String brand, String productType){
-        ListIterator<Product> iterator = searchedList.listIterator();
+    public List<Product> filter(List<Product> searchedList, FilterObject filterObject/*String size,
+                                String costFrom, String costTo, String brand, String productType*/){
+        /*= searchedList.listIterator();*/
+        List<Product> allProducts = new ArrayList<>();
+        allProducts.addAll(this.getAllTrainersEntities());
+        searchedList =  new ArrayList<>();
+        ListIterator<Product> iterator = allProducts.listIterator();
         String sizeE, productTypeE;
         Long costF, costT, costP;
         while (iterator.hasNext()){
@@ -169,29 +191,22 @@ public class TrainersEntityService {
             }
             else {
                 sizeE ="";
+                filterObject.setSize("All");
             }
-            if (costFrom.equals("")) costFrom="0";
-            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
-            try {
-                costF = Long.parseLong(costFrom);
-                costT = Long.parseLong(costTo);
-            } catch (Exception e){
-                costFrom="0";
-                costTo="0";
-                costF = 0L;
-                costT = 0L;
-            }
-            costF = Long.parseLong(costFrom);
-            costT = Long.parseLong(costTo);
+
+            costF = filterObject.getCostFrom();
+            costT = filterObject.getCostTo();
             if (costF < 0) costF = 0L;
             if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
-            if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
-                    (productTypeE.equals(productType) || productType.equals("All")))){
-                iterator.remove();
+            if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
+                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                searchedList.add(product);
+            } else if (searchedList.contains(product)) {
+                searchedList.remove(product);
             }
         }
         return searchedList;
@@ -259,8 +274,63 @@ public class TrainersEntityService {
         return url;
     }
 
+    public void save(TrainersEntity trainers){
+
+        Optional<TrainersEntity> optionalEntity = trainersRepository.getTrainersEntityByProductIdAndAttribute(trainers.getProductId(), "BRAND");
+        if (optionalEntity.isPresent()) {
+            TrainersEntity entity = optionalEntity.get();
+            entity.setAttribute("BRAND");
+            entity.setValue(trainers.getBrand().getDisplayName());
+            entity.setProductId(trainers.getProductId());
+            entity.setPhoto(trainers.getPhoto());
+            trainersRepository.save(entity);
+        }
+
+
+        optionalEntity = trainersRepository.getTrainersEntityByProductIdAndAttribute(trainers.getProductId(), "NAME");
+        if (optionalEntity.isPresent()) {
+            TrainersEntity entity = optionalEntity.get();
+            entity.setAttribute("NAME");
+            entity.setValue(trainers.getName());
+            entity.setProductId(trainers.getProductId());
+            trainersRepository.save(entity);
+        }
+
+
+        optionalEntity = trainersRepository.getTrainersEntityByProductIdAndAttribute(trainers.getProductId(), "COST");
+        if (optionalEntity.isPresent()) {
+            TrainersEntity entity = optionalEntity.get();
+            entity.setAttribute("COST");
+            entity.setValue(trainers.getCost().toString());
+            entity.setProductId(trainers.getProductId());
+            trainersRepository.save(entity);
+        }
+
+        optionalEntity = trainersRepository.getTrainersEntityByProductIdAndAttribute(trainers.getProductId(), "SIZE");
+        if (optionalEntity.isPresent()) {
+            TrainersEntity entity = optionalEntity.get();
+            entity.setAttribute("SIZE");
+            entity.setValue(trainers.getSize().getDisplayName());
+            entity.setProductId(trainers.getProductId());
+            trainersRepository.save(entity);
+        }
+
+        optionalEntity = trainersRepository.getTrainersEntityByProductIdAndAttribute(trainers.getProductId(), "AMOUNT");
+        if (optionalEntity.isPresent()) {
+            TrainersEntity entity = optionalEntity.get();
+            entity.setAttribute("AMOUNT");
+            entity.setValue(trainers.getAmount().toString());
+            entity.setProductId(trainers.getProductId());
+            trainersRepository.save(entity);
+        }
+
+    }
     public void addToCart(Long productId, String productType){
 
+    }
+
+    public void deleteTrainersEntitiesByProductId(Long productId){
+        trainersRepository.deleteTrainersEntitiesByProductId(productId);
     }
 
     public void deleteTrainersEntityById(Long id){

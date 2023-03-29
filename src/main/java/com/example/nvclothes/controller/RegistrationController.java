@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @Slf4j
@@ -31,8 +32,26 @@ public class RegistrationController {
     private TokenProvider tokenProvider;
 
     @GetMapping("/registration")
-    public String registration() {
-        return "registration";
+    public ModelAndView registration() {
+        Long userId;
+        String role;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
+        } catch (Exception e){
+            userId = null;
+            role = "null";
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("registration");
+        modelAndView.addObject("role", role);
+        modelAndView.addObject("userId", userId);
+        return modelAndView;
     }
 
     @PostMapping("/registration/create")
@@ -73,14 +92,32 @@ public class RegistrationController {
                     .build();
             cartEntityService.save(cart);
         }
-        else return registration();
+        else return "redirect:/registration";
 
         return "redirect:/all-products";
     }
 
     @GetMapping("/login")
-    public String login(){
-        return "login";
+    public ModelAndView login(){
+        Long userId;
+        String role;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = Long.parseLong(authentication.getName());
+            if (authentication.getAuthorities().size() == 1){
+                role = "ROLE_USER";
+            } else {
+                role = "ROLE_ADMIN";
+            }
+        } catch (Exception e){
+            userId = null;
+            role = "null";
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        modelAndView.addObject("userId", userId);
+        modelAndView.addObject("role", role);
+        return modelAndView;
     }
 
     @PostMapping("/login")

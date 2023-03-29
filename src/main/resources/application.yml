@@ -14,9 +14,23 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  spring:
-    liquibase:
-      change-log: classpath:/db/changelog/db.changelog-master.yaml
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  boot:
+    admin:
+      mail:
+        to: ${spring.mail.username}
+        from: ${spring.mail.username}
+  mail:
+    host: smtp.gmail.com
+    username: testmail29032023@gmail.com
+    password: ${ADMIN_PASSWORD}
+    port: 587
+    protocol: smtp
+    properties:
+      "mail.transport.protocol": smtp
+      "mail.smtp.auth": true
+      "mail.smtp.starttls.enable": true
 jwt:
   expiration: 360000
   secret: gthtvjuf

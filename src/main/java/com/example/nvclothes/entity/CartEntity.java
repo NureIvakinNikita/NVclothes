@@ -19,7 +19,7 @@ public class CartEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "my_seq_gen")
-    @SequenceGenerator(name = "my_seq_gen", sequenceName = "MY_SEQUENCE", allocationSize = 3)
+    @SequenceGenerator(name = "my_seq_gen", sequenceName = "MY_SEQUENCE", allocationSize = 1, initialValue = 4)
     @Column
     private Long id;
     @Column(name = "product_amount")

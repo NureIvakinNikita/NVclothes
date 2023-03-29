@@ -1,4 +1,4 @@
-package com.example.nvclothes.controller.searchObjects;
+package com.example.nvclothes.controller.sortObjects;
 
 public class SearchObject {
     private String searchTerm;

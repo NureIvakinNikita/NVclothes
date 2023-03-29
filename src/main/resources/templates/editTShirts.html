@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit T-shirt</title>
+
+    <link rel="stylesheet" href="/css/welcome.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/positionAndStylesOfBlocks.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/bootstrapMint2.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <!--<script>
+        function addToCart(productId) {
+            // Get token from localStorage
+            var token = localStorage.getItem("token");
+
+            // Make request to server with token in headers
+            fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({productId: productId})
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error(error));
+        }
+    </script>-->
+
+</head>
+<body style="background-color: #f4ebdb">
+
+<div th:replace="header :: header"></div>
+<div class="my-block" >
+    <p class="myFontStyle" style="font-size: 25px">Make an order</p>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px" >Product Id</p>
+        <p style="font-family: 'Itim', cursive;color: black;text-decoration: none;  font-size: 25px" th:text="'Edit t-shirts ' + ${product.brand.getDisplayName()} + ' ' +  ${product.name}"></p>
+    </div>
+</div>
+
+<form th:action="@{/admin/edit}" method="post">
+    <div class="row rcenter">
+        <div class="col-md-12 rcenter">
+            <img class="img-thumbnail" sizes="(min-width: 768px) 302px, 600px" th:src="@{${product.photo}}"/>
+            <input style="margin-top: 1%" class="form-control"  type="text" name="photo" th:placeholder="${product.photo}" th:value="${product.photo}">
+        </div>
+    </div>
+
+    <div class="row  rcenter">
+        <div class="col-md-12">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px">Brand</p>
+            <select class="form-control" style="font-family: 'Itim', cursive;color: black;text-decoration: none;" name="brand"><i class="bi bi-caret-down-fill"></i>
+                <option th:value="${product.brand.getDisplayName()}" th:text="${product.brand.getDisplayName()}"></option>
+                <option th:each="brand : ${brandList}"
+                        th:value="${brand.getDisplayName()}"
+                        th:text="${brand.getDisplayName()}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="row  rcenter">
+        <div class="col-md-12">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px">Name</p>
+            <input class="form-control"  type="text" name="name" th:placeholder="${product.name}" th:value="${product.name}">
+        </div>
+    </div>
+    <div class="row rcenter">
+        <div class="col-md-12">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px">Cost</p>
+            <input class="form-control"  type="number" name="cost" min="0" max="100000" th:placeholder="${product.cost}" th:value="${product.cost}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px">Size</p>
+            <input class="form-control"  type="text" name="size" th:value="${product.size.getDisplayName()}" th:value="${product.size.getDisplayName()}">
+        </div>
+    </div>
+    <div class="row rcenter">
+        <div class="col-md-12">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 25px">Amount</p>
+            <input class="form-control"  type="number" name="amount" min="1" max="200" th:placeholder="${product.amount}" th:value="${product.amount}">
+        </div>
+    </div>
+    <div class="row  rcenter">
+        <input type="hidden" name="productId" th:value="${product.productId}">
+        <input type="hidden" name="productType" th:value="${product.productType}">
+        <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Edit</button>
+    </div>
+
+</form>
+<form th:action="@{/admin/canceled}" method="get">
+    <div class="row  rcenter" style="margin-top: 2%">
+        <button class="btn btn-warning" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:2%; width: 50%;">Cancel</button>
+    </div>
+</form>
+<div th:replace="footer::footer"></div>
+</body>
+</html>

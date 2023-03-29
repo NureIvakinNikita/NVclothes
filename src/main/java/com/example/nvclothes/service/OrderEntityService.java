@@ -30,6 +30,12 @@ public class OrderEntityService {
     private OrderProductEntityService orderProductEntityService;
 
     @Autowired
+    private ClientEntityService clientEntityService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
     private ReceiptEntityService receiptEntityService;
 
     public void createOrder(OrderEntity order, List<Product> products,Long clientId, String recipient){
@@ -82,6 +88,14 @@ public class OrderEntityService {
         order.setReceipt(receipt);
         orderEntityRepository.save(order);
 
+        try {
+            ClientEntity client = clientEntityService.getClientById(clientId);
+            String text = client.getName() + " " + client.getLastName()+", your order was created and sent for processing. You will be called later to clarify the information provided. " +
+                    "Thank you for using our website to shop for clothing!";
+                    emailSenderService.sendSimpleEmail(client.getEmail(), "Order", text);
+        } catch (ClientNotFoundException e){
+            log.info(e.toString());
+        }
     }
 
     public OrderEntity getOrderEntityById(Long id) throws OrderEntityNotFoundException{

@@ -1,8 +1,10 @@
 package com.example.nvclothes.repository.interfaces;
 
 import com.example.nvclothes.entity.products.HoodieEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,9 +18,13 @@ public interface HoodieEntityRepositoryInterface extends JpaRepository<HoodieEnt
     Optional<HoodieEntity> getHoodieEntityByBrand(@Param("brand") String brand);
     List<HoodieEntity> getHoodieEntitiesByBrand(@Param("brand") String brand);
 
+    Optional<HoodieEntity> getHoodieEntityByProductIdAndAttribute(@Param("hoodie_id") Long productId, @Param("attribute") String attribute);
+
     Optional<HoodieEntity> getHoodieEntityByName(@Param("name") String name);
     List<HoodieEntity> getHoodieEntitiesByName(@Param("name") String name);
 
-
+    @Transactional
+    void deleteHoodieEntitiesByProductId(@Param("hoodie_id") Long productId);
+    @Transactional
     void deleteHoodieEntityById(@Param("id") Long id);
 }

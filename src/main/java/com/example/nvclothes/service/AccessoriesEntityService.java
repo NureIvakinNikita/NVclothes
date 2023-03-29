@@ -3,6 +3,7 @@ package com.example.nvclothes.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.dto.AccessoriesDto;
 import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.entity.products.HoodieEntity;
@@ -30,37 +31,48 @@ public class AccessoriesEntityService {
 
 
     public void createAccessoryEntity(@RequestBody AccessoriesDto accessoriesDto) throws Exception{
-        Long count;
-        if(accessoriesRepository.findAll().size()>0) count = accessoriesRepository.findAll().get(accessoriesRepository.findAll().size()-1).getProductId();
-        else count = 0L;
         if (accessoriesDto.getCost() != null && accessoriesDto.getBrand()!=null
                 && accessoriesDto.getName()!=null && accessoriesDto.getAmount()!=null){
             AccessoriesEntity accessoriesEntity = AccessoriesEntity.builder()
-                    .attribute(Attribute.BRAND.getDisplayName()).value(accessoriesDto.getBrand()).build();
+                    .attribute(Attribute.BRAND.getDisplayName()).value(accessoriesDto.getBrand())
+                    .photo(accessoriesDto.getPhoto())
+                    .productId(accessoriesDto.getAccessoriesId())
+                    .id(accessoriesDto.getId()).build();
 
-            accessoriesEntity.setProductId(++count);
+            accessoriesRepository.save(accessoriesEntity);
+
+            accessoriesEntity = AccessoriesEntity.builder()
+                    .productId(accessoriesDto.getAccessoriesId()).build();
             accessoriesEntity.setAttribute(Attribute.NAME.getDisplayName());
             accessoriesEntity.setValue(accessoriesDto.getName());
-            accessoriesEntity.setPhoto(addPhotoToAccessory(accessoriesDto.getPhoto()));
-            accessoriesRepository.save(accessoriesEntity);
-            accessoriesEntity.setAttribute(Attribute.COST.getDisplayName());
-            accessoriesEntity.setValue(accessoriesDto.getCost().toString());
-            accessoriesEntity.setPhoto(addPhotoToAccessory(accessoriesDto.getPhoto()));
-            accessoriesRepository.save(accessoriesEntity);
-            accessoriesEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
-            accessoriesEntity.setValue(accessoriesDto.getAmount().toString());
-            accessoriesEntity.setPhoto(addPhotoToAccessory(accessoriesDto.getPhoto()));
+            accessoriesEntity.setPhoto(accessoriesDto.getPhoto());
             accessoriesRepository.save(accessoriesEntity);
 
+
+            accessoriesEntity = AccessoriesEntity.builder()
+                    .productId(accessoriesDto.getAccessoriesId()).build();
+            accessoriesEntity.setAttribute(Attribute.COST.getDisplayName());
+            accessoriesEntity.setValue(accessoriesDto.getCost().toString());
+            accessoriesEntity.setPhoto(accessoriesDto.getPhoto());
+            accessoriesRepository.save(accessoriesEntity);
+
+
+            accessoriesEntity = AccessoriesEntity.builder()
+                    .productId(accessoriesDto.getAccessoriesId()).build();
+            accessoriesEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
+            accessoriesEntity.setValue(accessoriesDto.getAmount().toString());
+            accessoriesEntity.setPhoto(accessoriesDto.getPhoto());
+            accessoriesRepository.save(accessoriesEntity);
         }
         else {
             throw new Exception();
         }
-
     }
 
     public AccessoriesEntity getAccessoryEntityById(Long id) throws AccessoryNotFoundException{
         List<AccessoriesEntity> accessory = accessoriesRepository.getAccessoriesEntitiesByProductId(id);
+        Comparator<AccessoriesEntity> byId = Comparator.comparing(AccessoriesEntity::getId);
+        Collections.sort(accessory, byId);
         AccessoriesEntity accessoryEntity = AccessoriesEntity.builder().build();
         Long numericValues;
         if (accessory.size() == 0) {
@@ -156,34 +168,38 @@ public class AccessoriesEntityService {
         return entities;
     }
 
-    public List<Product> filter(List<Product> searchedList, String size,
-                                String costFrom, String costTo, String brand, String productType){
-        ListIterator<Product> iterator = searchedList.listIterator();
+    public List<Product> filter(List<Product> searchedList, FilterObject filterObject/*String size,
+                                String costFrom, String costTo, String brand, String productType*/){
+        /*= searchedList.listIterator();*/
+        List<Product> allProducts = new ArrayList<>();
+        allProducts.addAll(this.getAllAccessoriesEntities());
+        searchedList =  new ArrayList<>();
+        ListIterator<Product> iterator = allProducts.listIterator();
         String sizeE, productTypeE;
         Long costF, costT, costP;
         while (iterator.hasNext()){
             Product product = iterator.next();
-
-            if (costFrom.equals("")) costFrom="0";
-            if (costTo.equals("")) costTo="0";
-            costP = product.getCost();
-            try {
-                costF = Long.parseLong(costFrom);
-                costT = Long.parseLong(costTo);
-            } catch (Exception e){
-                costFrom="0";
-                costTo="0";
-                costF = 0L;
-                costT = 0L;
+            if (!product.getProductType().getDisplayName().equals("Accessories")) {
+                sizeE = product.getSize().getDisplayName();
             }
-            costF = Long.parseLong(costFrom);
-            costT = Long.parseLong(costTo);
+            else {
+                sizeE ="";
+                filterObject.setSize("All");
+            }
+            costP = product.getCost();
+
+            costF = filterObject.getCostFrom();
+            costT = filterObject.getCostTo();
             if (costF < 0) costF = 0L;
             if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
-            if (!(((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
-                (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")))){
-                iterator.remove();
+            if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
+                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                searchedList.add(product);
+            } else if (searchedList.contains(product)) {
+                searchedList.remove(product);
             }
         }
         return searchedList;
@@ -252,12 +268,69 @@ public class AccessoriesEntityService {
     }
 
 
+    public void save(AccessoriesEntity accessories){
+        /*AccessoriesEntity entity = AccessoriesEntity.builder().build();
+        entity.setAttribute("BRAND");
+        entity.setValue(accessories.getBrand().getDisplayName());
+        entity.setProductId(accessories.getProductId());
+        entity.setPhoto(accessories.getPhoto());
+        accessoriesRepository.save(entity);*/
+/*
+        Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttributeAndId(accessories.getProductId(), "NAME",1L);
+        AccessoriesEntity entity = optionalEntity.get();
+        entity.setAttribute("BRAND");
+        entity.setValue("Faded Future");
+        accessoriesRepository.save(entity);*/
+        Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(accessories.getProductId(), "BRAND");
+        if (optionalEntity.isPresent()) {
+            AccessoriesEntity entity = optionalEntity.get();
+            entity.setAttribute("BRAND");
+            entity.setValue(accessories.getBrand().getDisplayName());
+            entity.setProductId(accessories.getProductId());
+            entity.setPhoto(accessories.getPhoto());
+            accessoriesRepository.save(entity);
+        }
+
+
+        optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(accessories.getProductId(), "NAME");
+        if (optionalEntity.isPresent()) {
+            AccessoriesEntity entity = optionalEntity.get();
+            entity.setAttribute("NAME");
+            entity.setValue(accessories.getName());
+            entity.setProductId(accessories.getProductId());
+            accessoriesRepository.save(entity);
+        }
+
+
+        optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(accessories.getProductId(), "COST");
+        if (optionalEntity.isPresent()) {
+            AccessoriesEntity entity = optionalEntity.get();
+            entity.setAttribute("COST");
+            entity.setValue(accessories.getCost().toString());
+            entity.setProductId(accessories.getProductId());
+            accessoriesRepository.save(entity);
+        }
+
+
+        optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(accessories.getProductId(), "AMOUNT");
+        if (optionalEntity.isPresent()) {
+            AccessoriesEntity entity = optionalEntity.get();
+            entity.setAttribute("AMOUNT");
+            entity.setValue(accessories.getAmount().toString());
+            entity.setProductId(accessories.getProductId());
+            accessoriesRepository.save(entity);
+        }
+
+    }
+
 
     public void addToCart(Long productId, String productType){
 
     }
 
-
+    public void deleteAccessoriesEntitiesByProductId(Long productId){
+        accessoriesRepository.deleteAccessoriesEntitiesByProductId(productId);
+    }
     public void deleteAccessoryEntityById(Long id){
         accessoriesRepository.deleteAccessoriesEntityById(id);
     }

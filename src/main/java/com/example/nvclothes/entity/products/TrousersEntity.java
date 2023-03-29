@@ -19,7 +19,8 @@ import java.util.List;
 @Access(AccessType.FIELD)
 public class TrousersEntity extends Product{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "trousers_seq")
+    @SequenceGenerator(name = "trousers_seq", sequenceName = "trousers_seq", allocationSize = 1, initialValue = 21)
     @Column
     private Long id;
 

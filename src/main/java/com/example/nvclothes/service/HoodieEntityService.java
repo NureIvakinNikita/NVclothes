@@ -3,9 +3,12 @@ package com.example.nvclothes.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.dto.HoodieDto;
+import com.example.nvclothes.entity.products.AccessoriesEntity;
 import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.entity.products.Product;
+import com.example.nvclothes.entity.products.TShirtEntity;
 import com.example.nvclothes.exception.HoodieNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
@@ -26,28 +29,46 @@ public class HoodieEntityService {
 
     public void createHoodieEntity(@RequestBody HoodieDto hoodieDto) throws Exception{
 
+
         if (hoodieDto.getCost() != null && hoodieDto.getBrand()!=null
                 && hoodieDto.getName()!=null && hoodieDto.getAmount()!=null){
             HoodieEntity hoodieEntity = HoodieEntity.builder()
-                    .attribute(Attribute.BRAND.getDisplayName()).value(hoodieDto.getBrand()).build();
+                    .attribute(Attribute.BRAND.getDisplayName()).value(hoodieDto.getBrand())
+                    .photo(hoodieDto.getPhoto())
+                    .productId(hoodieDto.getHoodieId())
+                    .id(hoodieDto.getId()).build();
+
+            hoodieRepository.save(hoodieEntity);
+
+            hoodieEntity = HoodieEntity.builder()
+                    .productId(hoodieDto.getHoodieId()).build();
             hoodieEntity.setAttribute(Attribute.NAME.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getName());
-            hoodieEntity.setPhoto(addPhotoToHoodie(hoodieDto.getPhoto()));
+            hoodieEntity.setPhoto(hoodieDto.getPhoto());
             hoodieRepository.save(hoodieEntity);
+
+
+            hoodieEntity = HoodieEntity.builder()
+                    .productId(hoodieDto.getHoodieId()).build();
             hoodieEntity.setAttribute(Attribute.COST.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getCost().toString());
-            hoodieEntity.setPhoto(addPhotoToHoodie(hoodieDto.getPhoto()));
+            hoodieEntity.setPhoto(hoodieDto.getPhoto());
             hoodieRepository.save(hoodieEntity);
+
+
+            hoodieEntity = HoodieEntity.builder()
+                    .productId(hoodieDto.getHoodieId()).build();
             hoodieEntity.setAttribute(Attribute.SIZE.getDisplayName());
-            hoodieEntity.setValue(hoodieDto.getSize().toString());
-            hoodieEntity.setPhoto(addPhotoToHoodie(hoodieDto.getPhoto()));
+            hoodieEntity.setValue(hoodieDto.getSize().getDisplayName());
+            hoodieEntity.setPhoto(hoodieDto.getPhoto());
             hoodieRepository.save(hoodieEntity);
+
+            hoodieEntity = HoodieEntity.builder()
+                    .productId(hoodieDto.getHoodieId()).build();
             hoodieEntity.setAttribute(Attribute.AMOUNT.getDisplayName());
             hoodieEntity.setValue(hoodieDto.getAmount().toString());
-
-            hoodieEntity.setPhoto(addPhotoToHoodie(hoodieDto.getPhoto()));
+            hoodieEntity.setPhoto(hoodieDto.getPhoto());
             hoodieRepository.save(hoodieEntity);
-
         }
         else {
             throw new Exception();
@@ -58,6 +79,8 @@ public class HoodieEntityService {
     public HoodieEntity getHoodieEntityById(Long id) throws HoodieNotFoundException{
         List<HoodieEntity> hoodie = hoodieRepository.getHoodieEntitiesByProductId(id);
         HoodieEntity hoodieEntity = HoodieEntity.builder().build();
+        Comparator<HoodieEntity> byId = Comparator.comparing(HoodieEntity::getId);
+        Collections.sort(hoodie, byId);
         Long numericValues;
         if (hoodie.size() == 0) {
             throw new HoodieNotFoundException("Hoodie not found for id: " + id);
@@ -156,9 +179,13 @@ public class HoodieEntityService {
         return entities;
     }
 
-    public List<Product> filter(List<Product> searchedList, String size,
-                                String costFrom, String costTo, String brand, String productType){
-        ListIterator<Product> iterator = searchedList.listIterator();
+    public List<Product> filter(List<Product> searchedList, FilterObject filterObject/*String size,
+                                String costFrom, String costTo, String brand, String productType*/){
+        /*= searchedList.listIterator();*/
+        List<Product> allProducts = new ArrayList<>();
+        allProducts.addAll(this.getAllHoodieEntities());
+        searchedList =  new ArrayList<>();
+        ListIterator<Product> iterator = allProducts.listIterator();
         String sizeE, productTypeE;
         Long costF, costT, costP;
         while (iterator.hasNext()){
@@ -168,29 +195,22 @@ public class HoodieEntityService {
             }
             else {
                 sizeE ="";
+                filterObject.setSize("All");
             }
-            if (costFrom.equals("")) costFrom="0";
-            if (costTo.equals("")) costTo="0";
             costP = product.getCost();
-            try {
-                costF = Long.parseLong(costFrom);
-                costT = Long.parseLong(costTo);
-            } catch (Exception e){
-                costFrom="0";
-                costTo="0";
-                costF = 0L;
-                costT = 0L;
-            }
-            costF = Long.parseLong(costFrom);
-            costT = Long.parseLong(costTo);
+
+            costF = filterObject.getCostFrom();
+            costT = filterObject.getCostTo();
             if (costF < 0) costF = 0L;
             if (costT < 0) costT = 0L;
             productTypeE = product.getProductType().getDisplayName();
-            if (!((sizeE.equals(size) || size.equals("All")) &&
-                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF)  || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(brand) || brand.equals("All")) &&
-                    (productTypeE.equals(productType) || productType.equals("All")))){
-                iterator.remove();
+            if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
+                    ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
+                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                searchedList.add(product);
+            } else if (searchedList.contains(product)) {
+                searchedList.remove(product);
             }
         }
         return searchedList;
@@ -256,6 +276,62 @@ public class HoodieEntityService {
         String hoodie_id = "hoodie_"+hoodieId;
         String url = cloudinary.url().transformation(new Transformation().width(255).height(380).crop("fill")).generate(hoodie_id);
         return url;
+    }
+
+    public void save(HoodieEntity hoodie){
+
+        Optional<HoodieEntity> optionalEntity = hoodieRepository.getHoodieEntityByProductIdAndAttribute(hoodie.getProductId(), "BRAND");
+        if (optionalEntity.isPresent()) {
+            HoodieEntity entity = optionalEntity.get();
+            entity.setAttribute("BRAND");
+            entity.setValue(hoodie.getBrand().getDisplayName());
+            entity.setProductId(hoodie.getProductId());
+            entity.setPhoto(hoodie.getPhoto());
+            hoodieRepository.save(entity);
+        }
+
+
+        optionalEntity = hoodieRepository.getHoodieEntityByProductIdAndAttribute(hoodie.getProductId(), "NAME");
+        if (optionalEntity.isPresent()) {
+            HoodieEntity entity = optionalEntity.get();
+            entity.setAttribute("NAME");
+            entity.setValue(hoodie.getName());
+            entity.setProductId(hoodie.getProductId());
+            hoodieRepository.save(entity);
+        }
+
+
+        optionalEntity = hoodieRepository.getHoodieEntityByProductIdAndAttribute(hoodie.getProductId(), "COST");
+        if (optionalEntity.isPresent()) {
+            HoodieEntity entity = optionalEntity.get();
+            entity.setAttribute("COST");
+            entity.setValue(hoodie.getCost().toString());
+            entity.setProductId(hoodie.getProductId());
+            hoodieRepository.save(entity);
+        }
+
+        optionalEntity = hoodieRepository.getHoodieEntityByProductIdAndAttribute(hoodie.getProductId(), "SIZE");
+        if (optionalEntity.isPresent()) {
+            HoodieEntity entity = optionalEntity.get();
+            entity.setAttribute("SIZE");
+            entity.setValue(hoodie.getSize().getDisplayName());
+            entity.setProductId(hoodie.getProductId());
+            hoodieRepository.save(entity);
+        }
+
+        optionalEntity = hoodieRepository.getHoodieEntityByProductIdAndAttribute(hoodie.getProductId(), "AMOUNT");
+        if (optionalEntity.isPresent()) {
+            HoodieEntity entity = optionalEntity.get();
+            entity.setAttribute("AMOUNT");
+            entity.setValue(hoodie.getAmount().toString());
+            entity.setProductId(hoodie.getProductId());
+            hoodieRepository.save(entity);
+        }
+
+    }
+
+    public void deleteHoodieEntitiesByProductId(Long id){
+        hoodieRepository.deleteHoodieEntitiesByProductId(id);
     }
 
     public void addToCart(Long productId, String productType){

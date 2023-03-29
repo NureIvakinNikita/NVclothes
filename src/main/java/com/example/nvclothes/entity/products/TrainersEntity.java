@@ -7,6 +7,7 @@ import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ import java.util.List;
 @Access(AccessType.FIELD)
 public class TrainersEntity extends Product{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trainers_seq")
+    @SequenceGenerator(name = "trainers_seq", sequenceName = "trainers_seq", allocationSize = 1, initialValue = 21)
     @Column
     private Long id;
 
+    @NaturalId
     @Column(name = "trainers_id")
     private Long productId;
 

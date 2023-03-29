@@ -1,9 +1,11 @@
 package com.example.nvclothes.dto;
 
 import com.example.nvclothes.model.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class TrainersDto {
 
     private Long id;

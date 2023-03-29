@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Accessories</title>
+    <title>All products</title>
 
     <link rel="stylesheet" href="/css/welcome.css">
     <link rel="stylesheet" href="/css/font.css">
@@ -30,12 +30,13 @@
                 .catch(error => console.error(error));
         }
     </script>-->
+
 </head>
-<body class="background">
+<body>
 
 <div th:replace="header :: header"></div>
-<div th:replace="photoAccessories::photoAccessories"></div>
-<div th:replace="elementsAccessories::elementsAccessories"></div>
+<div th:replace="photo::photo"></div>
+<div th:replace="elements::elements"></div>
 <div th:replace="footer::footer"></div>
 </body>
 </html>

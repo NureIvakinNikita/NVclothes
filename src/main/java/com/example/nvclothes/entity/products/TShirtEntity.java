@@ -20,7 +20,8 @@ import java.util.List;
 @Access(AccessType.FIELD)
 public class TShirtEntity extends Product{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "tShirt_seq")
+    @SequenceGenerator(name = "tShirt_seq", sequenceName = "tShirt_seq", allocationSize = 1, initialValue = 21)
     @Column
     private Long id;
 

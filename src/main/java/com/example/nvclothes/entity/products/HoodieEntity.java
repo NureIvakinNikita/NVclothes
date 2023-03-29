@@ -22,11 +22,12 @@ import java.util.List;
 public class HoodieEntity extends Product{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "hoodies_seq")
+    @SequenceGenerator(name = "hoodies_seq", sequenceName = "hoodies_seq", allocationSize = 1, initialValue = 21)
     @Column
     private Long id;
 
-    @Column
+    @Column(name = "hoodie_id")
     private Long productId;
 
     @Column
