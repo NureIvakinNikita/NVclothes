@@ -2,6 +2,7 @@ package com.example.nvclothes.controller;
 
 import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.entity.products.Product;
+import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.service.HoodieEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class HoodiesController {
@@ -54,11 +57,13 @@ public class HoodiesController {
             userId = null;
             role = "null";
         }
+        List<String> brandList =  Arrays.stream(Brand.values()).map(Brand::getDisplayName).collect(Collectors.toList());
         modelAndView.setViewName("hoodies");
         modelAndView.addObject("productList", productList);
         modelAndView.addObject("userId", userId);
         modelAndView.addObject("role", role);
         modelAndView.addObject("filter", filterObject);
+        modelAndView.addObject("brandList", brandList);
         return modelAndView;
     }
 
@@ -190,32 +195,4 @@ public class HoodiesController {
         return modelAndView;
     }
 
-    @PostMapping("/hoodies/add-to-cart")
-    @PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
-    public ModelAndView addToCart(@RequestParam("productId") Long productId, @RequestParam("productType") String productType){
-        hoodiesServices.addToCart(productId, productType);
-
-        Long userId;
-        String role;
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            userId = Long.parseLong(authentication.getName());
-            if (authentication.getAuthorities().size() == 1){
-                role = "ROLE_USER";
-            } else {
-                role = "ROLE_ADMIN";
-            }
-        } catch (Exception e){
-            userId = null;
-            role = "null";
-        }
-        ModelAndView modelAndView = new ModelAndView("hoodies");
-        List<Product> productList = new ArrayList<>();
-        productList.addAll(hoodiesServices.getAllHoodieEntities());
-        modelAndView.addObject("productList", productList);
-        modelAndView.addObject("userId", userId);
-        modelAndView.addObject("role", role);
-        modelAndView.addObject("filter", filterObject);
-        return modelAndView;
-    }
 }

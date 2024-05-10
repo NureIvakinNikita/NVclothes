@@ -3,6 +3,7 @@ package com.example.nvclothes.service;
 import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.products.*;
+import com.example.nvclothes.service.interfaces.IAccessoriesEntityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class AllProductsServices {
     private HoodieEntityService hoodieEntityService;
 
     @Autowired
-    private AccessoriesEntityService accessoriesEntityService;
+    private IAccessoriesEntityService accessoriesEntityService;
 
     @Autowired
     private TrainersEntityService trainersEntityService;
@@ -73,7 +74,6 @@ public class AllProductsServices {
             }
             else {
                 sizeE ="";
-                filterObject.setSize("All");
             }
             costP = product.getCost();
             /*if (filterObject.getCostFrom().equals("")) filterObject.setCostFrom("0");
@@ -109,7 +109,10 @@ public class AllProductsServices {
         ListIterator<Product> iterator = searchedList.listIterator();
 
         while (iterator.hasNext()){
+
             Product product = iterator.next();
+            String brand = product.getBrand().getDisplayName();
+            System.out.println(brand.equals(searchItem));
             if (!(product.getName().equals(searchItem) || product.getName().contains(searchItem)
                     || product.getBrand().getDisplayName().equals(searchItem))){
                 iterator.remove();

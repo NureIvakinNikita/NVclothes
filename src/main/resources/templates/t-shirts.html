@@ -11,25 +11,215 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrapMint2.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-    <!--<script>
-        function addToCart(productId) {
-            // Get token from localStorage
-            var token = localStorage.getItem("token");
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function createProductHTML(product, role) {
 
-            // Make request to server with token in headers
-            fetch('/api/cart', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({productId: productId})
-            })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error(error));
+            var html = '<div class="col-md-3 rcenter">';
+            html += '<img class="img-thumbnail" sizes="(min-width: 768px) 302px, 600px" src="' + product.photo + '"/>';
+            html += '<div>';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none;">Brand: ' + product.brand + '</p>';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none;">Name: ' + product.name + '</p>';
+            html += '</div>';
+
+            html += '<div style="margin-top: 1%">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none;">Cost: ' + product.cost + ' £</p>';
+            html += '</div>';
+            if (role === null || role === "ROLE_ADMIN") {
+                html += '<form th:action="@{/admin/edit}" method="get" th:if="${role.equals(\'ROLE_ADMIN\')}">';
+                html += '<input type="hidden" name="productIdEdit" value="' + product.productId + '">';
+                html += '<input type="hidden" name="productTypeEdit" value="' + product.productType + '">';
+                html += '<button class="btn btn-warning form-control" type="submit" style="font-family: \'Itim\', cursive; margin-top: 5px;" name="">Edit</button>';
+                html += '</form>';
+                html += '<form th:action="@{/admin/delete}" method="get" name="" th:if="${role.equals(\'ROLE_ADMIN\')}">';
+                html += '<input type="hidden" name="productIdDelete" value="' + product.productId + '">';
+                html += '<input type="hidden" name="productTypeDelete" value="' + product.productType + '">';
+                html += '<button class="btn btn-danger form-control" type="submit" style="font-family: \'Itim\', cursive; margin-top: 5px;" name="">Delete</button>';
+                html += '</form>';
+            } else {
+                html += '<form onsubmit="addToCartTshirt(event, this, \'' + product.productId + '\', \'' + product.productType + '\')">';
+                html += '<input type="hidden" name="productId" value="' + product.productId + '">';
+                html += '<input type="hidden" name="productType" value="' + product.productType + '">';
+                html += '<button class="btn btn-success form-control" type="submit" style="font-family: \'Itim\', cursive; margin-top: 5px;" name="">Add to cart</button>';
+                html += '</form>';
+            }
+            html += '</div>';
+            return html;
         }
-    </script>-->
+
+        function addToCartTshirt(event, form, productId, productType) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/api/all-products/add-to-cart",
+                data: {
+                    productId: productId,
+                    productType: productType
+                },
+                success: function(response) {
+                    getTShirts();
+
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + errorThrown);
+
+                    if (jqXHR.status == 400) {
+                        getTShirts();
+                    }
+                }
+
+            });
+        }
+
+        function getTShirts() {
+            $.get("/api/t-shirts", function(data) {
+                $("#costTo").removeClass("is-invalid");
+                $("#costFrom").removeClass("is-invalid");
+                $("#products-container").empty();
+                var role = $("#role").val();
+                for (var i = 0; i < data.length; i++) {
+                    var product = data[i];
+                    var html = createProductHTML(product, role);
+                    $("#products-container").append(html);
+                }
+            });
+        }
+
+        function clearTShirtsFilters(event) {
+            event.preventDefault();
+            $.post("/api/t-shirts/clear", function(data) {
+                $("#costTo").removeClass("is-invalid");
+                $("#costFrom").removeClass("is-invalid");
+                var role = $("#role").val();
+                $("#products-container").empty();
+                for (var i = 0; i < data.length; i++) {
+                    var product = data[i];
+                    var html = createProductHTML(product, role);
+                    $("#products-container").append(html);
+
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $("#filter-form").submit(function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/t-shirts/filtered",
+                    data: formData,
+                    contentType: "application/x-www-form-urlencoded",
+                    success: function(data) {
+                        $("#costTo").removeClass("is-invalid");
+                        $("#costFrom").removeClass("is-invalid");
+                        $("#products-container").empty();
+
+
+                        for (var i = 0; i < data.length; i++) {
+                            var product = data[i];
+                            var html = createProductHTML(product);
+                            $("#products-container").append(html);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error: " + errorThrown);
+                        if (jqXHR.status == 400) {
+                            $("#costTo").empty();
+                            var errors = jqXHR.responseJSON;
+                            for (var key in errors) {
+                                if (key === "costToError") {
+                                    $("#costTo").addClass(" is-invalid");
+                                }
+                                if (key === "costFromBiggerError" || errorskey === "costFromError") {
+                                    $("#costFrom").addClass(" is-invalid");
+                                }
+                                $("#" + key).text(errors[key]);
+
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        function sort(){
+            $.post("/api/t-shirts/sort", function(data) {
+                var role = $("#role").val();
+                $("#products-container").empty();
+                for (var i = 0; i < data.length; i++) {
+                    var product = data[i];
+                    var html = createProductHTML(product, role);
+                    $("#products-container").append(html);
+                }
+            });
+
+        }
+
+        $(document).ready(function() {
+            $("#sort-form").submit(function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/t-shirts/sort",
+                    data: formData,
+                    success: function(data) {
+                        $("#costTo").removeClass("is-invalid");
+                        $("#costFrom").removeClass("is-invalid");
+                        $("#products-container").empty();
+
+
+                        for (var i = 0; i < data.length; i++) {
+                            var product = data[i];
+                            var html = createProductHTML(product);
+                            $("#products-container").append(html);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error: " + errorThrown);
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $("#search").submit(function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/t-shirts/search",
+                    data: formData,
+                    success: function(data) {
+                        $("#costTo").removeClass("is-invalid");
+                        $("#costFrom").removeClass("is-invalid");
+                        $("#products-container").empty();
+
+
+                        for (var i = 0; i < data.length; i++) {
+                            var product = data[i];
+                            var html = createProductHTML(product);
+                            $("#products-container").append(html);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error: " + errorThrown);
+                    }
+                });
+            });
+        });
+
+        $(window).on('load', function() {
+            getTShirts();
+        });
+    </script>
 </head>
 <body class="background">
 <div th:replace="header :: header"></div>

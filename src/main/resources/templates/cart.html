@@ -11,7 +11,127 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrapMint2.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
 
+        function createProductHTML(product, productsAmount) {
+            var html = '<div class="row table-border" style="margin-top: 2%;">';
+            html += '<div class="col-md-1"></div>';
+            html += '<div class="col-md-1 rcenter">';
+            html += '<img class="img-thumbnail" sizes="(min-width: 768px) 302px, 600px" src="' + product.photo + '"/>';
+            html += '</div>';
+            html += '<div class="col-md-2 rcenter">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none; font-size: 30px">Brand: ' + product.brand + '</p>';
+            html += '</div>';
+            html += '<div class="col-md-3 rcenter">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none; font-size: 30px">Name: ' + product.name + '</p>';
+            html += '</div>';
+            html += '<div class="col-md-2 rcenter">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none; font-size: 30px">Size:</p>';
+            html += '</div>';
+            html += '<div class="col-md-1 rcenter">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none; font-size: 30px">' + productsAmount[product.productId + '' + product.productType] + '</p>';
+            html += '</div>';
+            html += '<div class="col-md-1 rcenter">';
+            html += '<p style="font-family: \'Itim\', cursive;color: black;text-decoration: none; font-size: 30px">' + product.cost * productsAmount[product.productId + '' + product.productType] + ' £</p>';
+            html += '</div>';
+            html += '<div class="col-md-1 rcenter">';
+            html += '<p style="color: black;font-size: 30px"  text="' + product.productId + '"></p>';
+            html += '<form class="remove-form" onsubmit="remove(event, this, \'' + product.productId + '\', \'' + product.productType + '\')">';
+            html += '<input type="hidden" name="productId" value="' + product.productId + '">';
+            html += '<input type="hidden" name="productType" th:value="' + product.productType + '">';
+            html += '<button class="btn btn-secondary form-control" type="submit" style="font-family: \'Itim\', cursive; margin-top: 5px; width: 100%" name="">Remove</button>';
+            html += '</form>';
+            html += '</div>';
+            html += '</div>';
+            return html;
+        }
+        $(document).ready(function() {
+
+            $('#city').change(function() {
+                var city = $('#city').val();
+
+                $.ajax({
+                    url: '/getPoshtList',
+                    method: 'POST',
+                    data: {city: city},
+                    success: function(data) {
+                        var options = '';
+                        for (var i = 0; i < data.length; i++) {
+                            options += '<option>' + data[i] + '</option>';
+                        }
+                        $('#posht').html(options);
+                    }
+                });
+            });
+        });
+
+
+        function remove(event, form, productId, productType) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/api/user/cart/remove",
+                data: {
+                    productId: productId,
+                    productType: productType
+                },
+                success: function(response) {
+                    getProducts();
+
+                }
+            });
+        }
+
+        function getProducts() {
+            $.get("/api/user/cart", function(data) {
+
+                var productList = data.productList;
+                var productsAmount = data.productsAmount;
+                console.log(productList);
+                $("#costTo").removeClass("is-invalid");
+                $("#costFrom").removeClass("is-invalid");
+                $("#cart-container").empty();
+                var role = $("#role").val();
+                for (var i = 0; i < productList.length; i++) {
+                    var product = productList[i];
+                    console.log(productsAmount[product])
+                    var html = createProductHTML(product, productsAmount);
+                    $("#cart-container").append(html);
+                }
+            });
+        }
+
+
+
+        function placeOrder(event) {
+            event.preventDefault();
+            var city = $("#city").val();
+            var posht = $("#posht").val();
+            var payment = $("#payment").val();
+            var recipient = $("#recipient").val();
+
+            $.ajax({
+                url: "/api/user/cart/order",
+                method: "POST",
+                data: { city: city, posht: posht, payment: payment, recipient: recipient },
+                success: function(response) {
+
+                    console.log("Order placed successfully");
+                    window.location.href = response;
+                },
+                error: function(xhr, status, error) {
+
+                    console.log("Error placing order: " + error);
+                    window.location.href = xhr.responseText;
+                }
+            });
+        }
+
+        $(window).on('load', function() {
+            getProducts();
+        });
+    </script>
 </head>
 <body style="background-color: #f4ebdb">
 <div th:replace="header :: header"></div>

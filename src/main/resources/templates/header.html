@@ -24,13 +24,16 @@
             <a class="nav-link " href="/trousers"  >Trousers</a>
           </li>
           <li class="nav-item " th:if="${!role.equals('ROLE_ADMIN')}">
+            <a class="nav-link" href="/trainers"  >Trainers</a>
+          </li>
+          <li class="nav-item " th:if="${!role.equals('ROLE_ADMIN')}">
             <a class="nav-link" href="/hoodies"  >Hoodies</a>
           </li>
           <li class="nav-item " th:if="${!role.equals('ROLE_ADMIN')}">
             <a class="nav-link" href="/accessories"  >Accessories</a>
           </li>
         </ul>
-        <form class="d-flex " th:action="@{/all-products/search}" method="post">
+        <form class="d-flex"  id="search"> <!--th:action="@{/all-products/search}" method="post">-->
           <input class="form-control me-sm-2 " style="font-family: 'Itim', cursive;" type="text" placeholder="Search" name="search">
           <button class="btn btn-secondary my-2 my-sm-0 " type="submit" style="font-family: 'Itim', cursive;">Search</button>
         </form>

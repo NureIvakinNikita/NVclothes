@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/java/com/example/nvclothes/controller/lab3Controller
+src/main/java/com/example/nvclothes/controller/Lab1Controller.java
+src/main/java/com/example/nvclothes/controller/Lab2Controller.java

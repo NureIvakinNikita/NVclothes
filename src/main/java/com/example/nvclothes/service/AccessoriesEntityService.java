@@ -6,25 +6,24 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.nvclothes.controller.sortObjects.FilterObject;
 import com.example.nvclothes.dto.AccessoriesDto;
 import com.example.nvclothes.entity.products.AccessoriesEntity;
-import com.example.nvclothes.entity.products.HoodieEntity;
 import com.example.nvclothes.entity.products.Product;
 import com.example.nvclothes.exception.AccessoryNotFoundException;
-import com.example.nvclothes.exception.HoodieNotFoundException;
 import com.example.nvclothes.model.Attribute;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
-import com.example.nvclothes.model.Size;
 import com.example.nvclothes.repository.interfaces.AccessoriesEntityRepositoryInterface;
+import com.example.nvclothes.service.interfaces.IAccessoriesEntityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.util.*;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class AccessoriesEntityService {
+public class AccessoriesEntityService implements IAccessoriesEntityService {
 
     private final AccessoriesEntityRepositoryInterface accessoriesRepository;
 
@@ -195,8 +194,7 @@ public class AccessoriesEntityService {
             productTypeE = product.getProductType().getDisplayName();
             if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
                     ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
-                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")))){
                 searchedList.add(product);
             } else if (searchedList.contains(product)) {
                 searchedList.remove(product);
@@ -244,7 +242,7 @@ public class AccessoriesEntityService {
         return productList;
     }
 
-    public String addPhotoToAccessory(String hoodiePhoto){
+    public String addPhotoToAccessory(String accessoryPhoto){
         Map config = new HashMap();
         String cloudName, api_key, api_secret;
         cloudName = System.getenv("CLOUD_NAME");
@@ -258,7 +256,7 @@ public class AccessoriesEntityService {
         list.addAll(getAllAccessoriesEntities());
         Long accessoryId = list.get(list.size()).getProductId();
         try {
-            cloudinary.uploader().upload(hoodiePhoto, ObjectUtils.asMap("public_id", "accessory_"+accessoryId));
+            cloudinary.uploader().upload(accessoryPhoto, ObjectUtils.asMap("public_id", "accessory_"+accessoryId));
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         }
@@ -269,18 +267,6 @@ public class AccessoriesEntityService {
 
 
     public void save(AccessoriesEntity accessories){
-        /*AccessoriesEntity entity = AccessoriesEntity.builder().build();
-        entity.setAttribute("BRAND");
-        entity.setValue(accessories.getBrand().getDisplayName());
-        entity.setProductId(accessories.getProductId());
-        entity.setPhoto(accessories.getPhoto());
-        accessoriesRepository.save(entity);*/
-/*
-        Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttributeAndId(accessories.getProductId(), "NAME",1L);
-        AccessoriesEntity entity = optionalEntity.get();
-        entity.setAttribute("BRAND");
-        entity.setValue("Faded Future");
-        accessoriesRepository.save(entity);*/
         Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(accessories.getProductId(), "BRAND");
         if (optionalEntity.isPresent()) {
             AccessoriesEntity entity = optionalEntity.get();

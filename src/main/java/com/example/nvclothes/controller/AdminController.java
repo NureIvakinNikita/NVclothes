@@ -1,23 +1,18 @@
 package com.example.nvclothes.controller;
 
 import com.example.nvclothes.controller.sortObjects.FilterObject;
-import com.example.nvclothes.entity.CartEntity;
 import com.example.nvclothes.entity.products.*;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
 import com.example.nvclothes.service.AdminService;
 import com.example.nvclothes.service.AllProductsServices;
-import com.example.nvclothes.service.HoodieEntityService;
+import com.example.nvclothes.service.interfaces.IAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,13 +23,21 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private AdminService adminService;
+    private IAdminService adminService;
 
     @Autowired
     private AllProductsServices allProductsServices;
 
     @Autowired
     private FilterObject filterObject;
+
+    @GetMapping("/admin/product/{id}")
+    @ResponseBody
+    public String getProductById(@PathVariable Long id) {
+        AccessoriesEntity accessoriesEntity = (AccessoriesEntity) allProductsServices.getProductByProductIdAndType(id, "ACCESSORY");
+        return accessoriesEntity.toString();
+    }
+
 
     @GetMapping("/admin/add/product")
     public ModelAndView add(){
@@ -124,8 +127,8 @@ public class AdminController {
     }
 
     @GetMapping("/admin/delete")
-    public ModelAndView deletePage(@RequestParam("productIdDelete") Long productIdEdit,
-                                 @RequestParam("productTypeDelete") String productTypeEdit){
+    public ModelAndView deletePage(@RequestParam("productIdDelete") Long productIdDelete,
+                                 @RequestParam("productTypeDelete") String productTypeDelete){
         ModelAndView modelAndView = new ModelAndView();
 
         Long userId;
@@ -144,28 +147,28 @@ public class AdminController {
         }
         Product product = null;
         modelAndView.setViewName("deletePage");
-        switch (productTypeEdit) {
+        switch (productTypeDelete) {
             case "HOODIE":
-                product = allProductsServices.getProductByProductIdAndType(productIdEdit, productTypeEdit);
+                product = allProductsServices.getProductByProductIdAndType(productIdDelete, productTypeDelete);
                 //modelAndView.addObject("product", product);
                 break;
             case "ACCESSORY":
-                product = allProductsServices.getProductByProductIdAndType(productIdEdit, productTypeEdit);
+                product = allProductsServices.getProductByProductIdAndType(productIdDelete, productTypeDelete);
                 //modelAndView.setViewName("deletePage");
                 //modelAndView.addObject("product", product);
                 break;
             case "TRAINERS":
-                product = allProductsServices.getProductByProductIdAndType(productIdEdit, productTypeEdit);
+                product = allProductsServices.getProductByProductIdAndType(productIdDelete, productTypeDelete);
                 //modelAndView.setViewName("deletePage");
                 ///modelAndView.addObject("product", product);
                 break;
             case "TROUSERS":
-                product = allProductsServices.getProductByProductIdAndType(productIdEdit, productTypeEdit);
+                product = allProductsServices.getProductByProductIdAndType(productIdDelete, productTypeDelete);
                 //modelAndView.setViewName("deletePage");
                 //modelAndView.addObject("product", product);
                 break;
             case "TSHIRT":
-                product = allProductsServices.getProductByProductIdAndType(productIdEdit, productTypeEdit);
+                product = allProductsServices.getProductByProductIdAndType(productIdDelete, productTypeDelete);
                 //modelAndView.setViewName("deletePage");
                 //modelAndView.addObject("product", product);
                 break;

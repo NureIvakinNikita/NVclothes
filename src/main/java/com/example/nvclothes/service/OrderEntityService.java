@@ -10,18 +10,21 @@ import com.example.nvclothes.exception.OrderEntityNotFoundException;
 import com.example.nvclothes.exception.ReceiptEntityNotFoundException;
 import com.example.nvclothes.repository.interfaces.OrderEntityRepositoryInterface;
 import com.example.nvclothes.repository.interfaces.OrderProductEntityRepositoryInterface;
+import com.example.nvclothes.service.interfaces.IOrderEntityService;
+import jakarta.persistence.criteria.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 @Slf4j
-public class OrderEntityService {
+public class OrderEntityService implements IOrderEntityService  {
 
     @Autowired
     private OrderEntityRepositoryInterface orderEntityRepository;
@@ -120,6 +123,10 @@ public class OrderEntityService {
 
     public List<OrderEntity> getOrderEntitiesByRegistrationDate(Date date){
         return orderEntityRepository.getOrderEntitiesByRegistrationDate(date);
+    }
+
+    public List<OrderEntity> getAllOrders(){
+        return orderEntityRepository.findAll();
     }
 
 }

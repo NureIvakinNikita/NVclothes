@@ -8,6 +8,7 @@ import com.example.nvclothes.entity.products.*;
 import com.example.nvclothes.exception.AccessoryNotFoundException;
 import com.example.nvclothes.exception.CartNotFoundException;
 import com.example.nvclothes.repository.interfaces.CartEntityRepositoryInterface;
+import com.example.nvclothes.service.interfaces.IAccessoriesEntityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -29,7 +30,7 @@ public class CartEntityService {
     private HoodieEntityService hoodieEntityService;
 
     @Autowired
-    private AccessoriesEntityService accessoriesEntityService;
+    private IAccessoriesEntityService accessoriesEntityService;
 
     @Autowired
     private TrainersEntityService trainersEntityService;

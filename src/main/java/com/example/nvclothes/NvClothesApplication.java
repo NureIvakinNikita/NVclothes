@@ -24,12 +24,12 @@ public class NvClothesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NvClothesApplication.class, args);
 
-		Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(1L, "BRAND");
+		/*Optional<AccessoriesEntity> optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(1L, "BRAND");
 		optionalEntity = accessoriesRepository.getAccessoriesEntityByProductIdAndAttribute(1L, "NAME");
 		AccessoriesEntity entity = optionalEntity.get();
 		entity.setAttribute("BRAND");
 		entity.setValue("Faded Future");
-		accessoriesRepository.save(entity);
+		accessoriesRepository.save(entity);*/
 		/*Map config = new HashMap();
 		String cloudName, api_key, api_secret;
 		cloudName = System.getenv("CLOUD_NAME");

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "cart_product")
+@Table(name = "cart_product", schema = "public")
 @Access(AccessType.FIELD)
 @Builder
 @AllArgsConstructor

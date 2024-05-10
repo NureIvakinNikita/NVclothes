@@ -47,7 +47,10 @@
             <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">Click to remove</p>
         </div>
     </div>
-    <div class="row table-border " style="margin-top: 2%;" th:each="product : ${productList}">
+    <div id="cart-container">
+
+    </div>
+   <!-- <div class="row table-border" id="cart-container" style="margin-top: 2%;" th:each="product : ${productList}">
         <div class="col-md-1">
 
         </div>
@@ -67,10 +70,10 @@
             <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px" th:text="${productsAmount.get(product.getProductId)}"></p>
         </div>
         <div class="col-md-1 rcenter">
-            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px" th:text="${product.cost*productsAmount.get(product.getProductId)}+' £'"></p>
-            <!--<input type="hidden" name="productId-${product.id}" th:value="${product.productId}">
+            <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px" th:text="${product.cost*productsAmount.get(product.getProductId+''+product.getProductType())}+' £'"></p>
+            &lt;!&ndash;<input type="hidden" name="productId-${product.id}" th:value="${product.productId}">
             <input type="hidden" name="productType-${product.id}" th:value="${product.productType}">
-            <input type="number" name="amount-${product.id}"  min="1" max="${product.getAmount()}" defaultValue="1">-->
+            <input type="number" name="amount-${product.id}"  min="1" max="${product.getAmount()}" defaultValue="1">&ndash;&gt;
         </div>
         <div class="col-md-1 rcenter">
             <form class="d-flex " th:action="@{/user/cart/remove}" method="post">
@@ -79,7 +82,7 @@
                 <button  class="btn btn-secondary form-control"  type="submit" style="font-family: 'Itim', cursive; margin-top: 5px; width: 100%" name="">Remove</button>
             </form>
         </div>
-    </div>
+    </div>-->
     <div class="row" style="margin-top: 2%;">
         <div class="col-md-6 rcenter">
             <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">Total price:</p>
@@ -88,36 +91,32 @@
             <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px" th:text="'Cost: ' + ${totalCost}+ ' '"></p>
         </div>
     </div>
-    <form th:action="@{/user/cart/order}" method="post">
+    <form th:if="${productList != null || productList.size() != 0}"> <!--th:action="@{/user/cart/order}" method="post">-->
         <div class="row">
 
             <div class="col-md-6 rcenter">
                 <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">City</p>
-                <select class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="city"><i class="bi bi-caret-down-fill" style="color: black"></i>
+                <select th:if="${cityList !=null}" id="city" class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="city">
+                    <i class="bi bi-caret-down-fill" style="color: black"></i>
                     <option>Select City</option>
-                    <option>Kharkiv</option>
-                    <option>Kyiv</option>
-                    <option>City1</option>
-                    <option>City2</option>
-                    <option>City3</option>
+                    <option th:each="city : ${cityList}"
+                            th:value="${city.getName()}"
+                            th:text="${city.getName()}"></option>
                 </select>
+
             </div>
             <div class="col-md-6 rcenter">
                 <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">Post</p>
-                <select class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="posht"><i class="bi bi-caret-down-fill" style="color: black"></i>
+                <select id="posht" class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="posht">
+                    <i class="bi bi-caret-down-fill" style="color: black"></i>
                     <option>Select Post</option>
-                    <option>Nova Poshta №.21</option>
-                    <option>Nova Poshta №.2</option>
-                    <option>Nova Poshta №.3</option>
-                    <option>Nova Poshta №.4</option>
-                    <option>Nova Poshta №.5</option>
                 </select>
             </div>
         </div>
         <div class="row">
             <div class = "col-md-6 rcenter" >
                 <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">Type of payment</p>
-                <select class="form-control" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="payment"><i class="bi bi-caret-down-fill" style="color: black"></i>
+                <select class="form-control" id="payment" style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" name="payment"><i class="bi bi-caret-down-fill" style="color: black"></i>
                     <option>Select Payment</option>
                     <option>By card</option>
                     <option>In cash</option>
@@ -127,11 +126,11 @@
             </div>
             <div class = "col-md-6 rcenter">
                 <p style="font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 30px">Recipient (optional)</p>
-                <input style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" class="form-control"  type="text"  name="recipient">
+                <input style="margin-top: 10px; width: 85%; margin-left: 10px; font-family: 'Itim', cursive;color: black;text-decoration: none; font-size: 20px" id="recipient" class="form-control"  type="text"  name="recipient">
             </div>
         </div>
         <div class="row rcenter" style="margin-top: 3%; margin-bottom: 3%">
-            <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Order</button>
+            <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;"  onclick="placeOrder(event)">Order</button>
         </div>
     </form>
 </div>

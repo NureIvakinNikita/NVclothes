@@ -16,7 +16,6 @@ public abstract class Product {
     private String name;
     private Long cost;
     private Size size;
-
     private Long amount;
 
     private ProductType productType;

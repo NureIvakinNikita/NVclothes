@@ -21,51 +21,65 @@
 <div class="my-block" style="background-color: #f4ebdb">
     <p class="myFontStyle" style="font-size: 25px">Create your personal account</p>
 </div>
-<form th:action="@{/registration/create}" method="post">
-    <div class="row" style="background-color: #f4ebdb; ">
-        <div class="col-md-4 rcenter">
-            <div style=" font-family: 'Itim', cursive; color: black;">
-                <p>Enter your firstname:</p>
-                <input class="form-control"  type="text"  name="name">
+<!--<div class="collapse" th:classappend="${message != null} ? ' show'">-->
+    <form th:action="@{/registration/create}" method="post">
+        <div class="row" style="background-color: #f4ebdb; ">
+            <div class="col-md-4 rcenter">
+                <div style=" font-family: 'Itim', cursive; color: black;">
+                    <p>Enter your firstname:</p>
+                    <input class="form-control"  type="text"  name="name"  th:value="${clientDto?.name}" th:classappend="${nameError != null} ? ' is-invalid' : ''"
+                           placeholder="Name" />
+                    <div class="invalid-feedback" th:if="${nameError != null}" th:text="${nameError}"></div>
+                </div>
+            </div>
+            <div class="col-md-4 rcenter">
+                <div style=" font-family: 'Itim', cursive; color: black;">
+                    <p>Enter your email:</p>
+                    <input class="form-control"  type="text" name="email" th:value="${clientDto?.email}" th:classappend="${emailError != null} ? ' is-invalid' : ''"
+                           placeholder="Email" />
+                    <div class="invalid-feedback" th:if="${emailError != null}" th:text="${emailError}"></div>
+                </div>
+            </div>
+            <div class="col-md-4 rcenter">
+                <div style=" font-family: 'Itim', cursive; color: black;">
+                    <p>Create your password:</p>
+                    <input class="form-control"  type="password" name="password" th:value="${clientDto?.password}" th:classappend="${passwordError != null} ? ' is-invalid' : ''"
+                           placeholder="Password" />
+                    <div class="invalid-feedback" th:if="${passwordError != null}" th:text="${passwordError}"></div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4 rcenter">
-            <div style=" font-family: 'Itim', cursive; color: black;">
-                <p>Enter your email:</p>
-                <input class="form-control"  type="text" name="email">
+        <div class="row" style="background-color: #f4ebdb">
+            <div class="col-md-4 rcenter">
+                <div style=" font-family: 'Itim', cursive; color: black;">
+                    <p>Enter your last name:</p>
+                    <input class="form-control"  type="text"  name="lastName" th:value="${clientDto?.lastName}" th:classappend="${lastNameError != null} ? ' is-invalid' : ''"
+                           placeholder="Last name" />
+                    <div class="invalid-feedback" th:if="${lastNameError != null}" th:text="${lastNameError}"></div>
+                </div>
+            </div>
+            <div class="col-md-4 rcenter">
+                <div style="font-family: 'Itim', cursive; color: black;">
+                    <p>Enter your telephone number:</p>
+                    <input class="form-control"  type="text"  name="telephoneNumber" th:value="${clientDto?.telephoneNumber}" th:classappend="${telephoneNumberError != null} ? ' is-invalid' : ''"
+                           placeholder="Telephone number" />
+                    <div class="invalid-feedback" th:if="${telephoneNumberError != null}" th:text="${telephoneNumberError}"></div>
+                </div>
+            </div>
+            <div class="col-md-4 rcenter">
+                <div style="font-family: 'Itim', cursive; color: black;">
+                    <p>Confirm your password:</p>
+                    <input class="form-control"  type="password"  name="password2" th:value="${clientDto?.password2}" th:classappend="${password2Error != null} ? ' is-invalid' : ''"
+                           placeholder="Password verification" />
+                    <div class="invalid-feedback" th:if="${password2Error != null}" th:text="${password2Error}"></div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4 rcenter">
-            <div style=" font-family: 'Itim', cursive; color: black;">
-                <p>Create your password:</p>
-                <input class="form-control"  type="password" name="password">
-            </div>
+        <div class="row justify-content-center" style="background-color: #f4ebdb">
+            <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Create</button>
         </div>
-    </div>
-    <div class="row" style="background-color: #f4ebdb">
-        <div class="col-md-4 rcenter">
-            <div style=" font-family: 'Itim', cursive; color: black;">
-                <p>Enter your last name:</p>
-                <input class="form-control"  type="text"  name="lastName" >
-            </div>
-        </div>
-        <div class="col-md-4 rcenter">
-            <div style="font-family: 'Itim', cursive; color: black;">
-                <p>Enter your telephone number:</p>
-                <input class="form-control"  type="text"  name="telephoneNumber" >
-            </div>
-        </div>
-        <div class="col-md-4 rcenter">
-            <div style="font-family: 'Itim', cursive; color: black;">
-                <p>Confirm your password:</p>
-                <input class="form-control"  type="password"  name="password2">
-            </div>
-        </div>
-    </div>
-    <div class="row justify-content-center" style="background-color: #f4ebdb">
-        <button class="btn btn-success" type="submit" style="font-family: 'Itim', cursive; color: black; margin-top:5%; width: 50%;">Create</button>
-    </div>
-</form>
-<div th:replace="footer :: footer" ></div>
+    </form>
+<!--</div>-->
+<div style="margin-top: 10%" th:replace="footer :: footer" ></div>
 </body>
 </html>

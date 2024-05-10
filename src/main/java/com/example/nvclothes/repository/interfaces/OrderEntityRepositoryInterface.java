@@ -14,6 +14,8 @@ public interface OrderEntityRepositoryInterface extends JpaRepository<OrderEntit
 
     Optional<OrderEntity> getOrderEntityById(Long id);
 
+    List<OrderEntity> findAll();
+
     //List<OrderEntity> getOrderEntitiesByProductType(String productType);
 
     List<OrderEntity> getOrderEntitiesByRegistrationDate(Date date);

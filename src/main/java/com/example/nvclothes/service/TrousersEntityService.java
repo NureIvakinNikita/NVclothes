@@ -204,8 +204,7 @@ public class TrousersEntityService {
             productTypeE = product.getProductType().getDisplayName();
             if (((sizeE.equals(filterObject.getSize()) || filterObject.getSize().equals("All") || sizeE.equals("")) &&
                     ((costF<=costP && costP<=costT) || (costT<=costP && costP<=costF) || (costT == 0 && costF == 0)) &&
-                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")) &&
-                    (productTypeE.equals(filterObject.getProductType()) || filterObject.getProductType().equals("All")))){
+                    (product.getBrand().getDisplayName().equals(filterObject.getBrand()) || filterObject.getBrand().equals("All")))){
                 searchedList.add(product);
             } else if (searchedList.contains(product)) {
                 searchedList.remove(product);

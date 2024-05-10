@@ -2,6 +2,7 @@ package com.example.nvclothes.service;
 
 import com.example.nvclothes.entity.ClientEntity;
 import com.example.nvclothes.exception.ClientNotFoundException;
+import com.example.nvclothes.repository.interfaces.CartEntityRepositoryInterface;
 import com.example.nvclothes.repository.interfaces.ClientEntityRepositoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClientEntityService {
 
+    private final CartEntityRepositoryInterface cartEntityRepositoryInterface;
     private final ClientEntityRepositoryInterface clientRepository;
 
     private  final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -77,6 +79,11 @@ public class ClientEntityService {
         }
 
         return bCryptPasswordEncoder.matches(password, encodedPassword);
+    }
+
+    public void deleteClientById(Long id){
+        cartEntityRepositoryInterface.deleteCartEntityByClientId(id);
+        clientRepository.deleteClientEntityById(id);
     }
 
 

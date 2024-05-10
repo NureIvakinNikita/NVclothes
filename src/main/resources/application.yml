@@ -34,3 +34,6 @@ spring:
 jwt:
   expiration: 360000
   secret: gthtvjuf
+
+server:
+  port: 8081

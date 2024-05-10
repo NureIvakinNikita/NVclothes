@@ -7,22 +7,25 @@ import com.example.nvclothes.dto.*;
 import com.example.nvclothes.entity.products.*;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.Size;
+import com.example.nvclothes.service.interfaces.IAccessoriesEntityService;
+import com.example.nvclothes.service.interfaces.IAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Component
 @Slf4j
-public class AdminService {
+public class AdminService implements IAdminService {
 
     @Autowired
     private HoodieEntityService hoodieEntityService;
     @Autowired
-    private AccessoriesEntityService accessoriesEntityService;
+    private IAccessoriesEntityService accessoriesEntityService;
     @Autowired
     private TrousersEntityService trousersEntityService;
     @Autowired

@@ -119,3 +119,9 @@ databaseChangeLog:
   - include:
       file: 040-return-constraint.sql
       relativeToChangelogFile: true
+  - include:
+      file: 042-create-table-city.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 043-create-table-post-office.sql
+      relativeToChangelogFile: true

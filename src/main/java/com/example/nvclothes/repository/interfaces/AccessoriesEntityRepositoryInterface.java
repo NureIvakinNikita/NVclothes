@@ -29,4 +29,6 @@ public interface AccessoriesEntityRepositoryInterface extends JpaRepository<Acce
     void deleteAccessoriesEntitiesByProductId(@Param("accessories_id") Long productId);
     @Transactional
     void deleteAccessoriesEntityById(@Param("id") Long id);
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.nvclothes.entity;
 
 import com.example.nvclothes.entity.products.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class OrderEntity {
     private Long orderGroupId;
 
     @Column
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date registrationDate;
 
     @Column

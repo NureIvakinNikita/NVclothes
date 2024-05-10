@@ -5,6 +5,7 @@ import com.example.nvclothes.entity.OrderEntity;
 import com.example.nvclothes.model.Brand;
 import com.example.nvclothes.model.ProductType;
 import com.example.nvclothes.model.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,9 +29,11 @@ public class AccessoriesEntity extends Product{
     @Column(name="accessories_id")
     private Long productId;
 
+    @JsonIgnore
     @Column
     private String attribute;
 
+    @JsonIgnore
     @Column
     private String value;
 
@@ -48,6 +51,7 @@ public class AccessoriesEntity extends Product{
 
     private Long amount;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "order_product",
             joinColumns =
@@ -57,6 +61,7 @@ public class AccessoriesEntity extends Product{
     private OrderEntity order;
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "accessory")
     private List<CartProductEntity> cartProductEntities;
 }
