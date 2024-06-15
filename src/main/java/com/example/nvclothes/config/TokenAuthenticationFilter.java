@@ -39,7 +39,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
                 String userEmail = tokenProvider.getUserEmailFromToken(jwt);
                 UserDetails userDetails;
-                if (userEmail.equals("nikita.ivakin@nure.ua")){
+                if (userEmail.equals("admin.admin@gmail.com")){
                     userDetails= new User(userId.toString(), "null",
                             List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN")));
                 } else {
